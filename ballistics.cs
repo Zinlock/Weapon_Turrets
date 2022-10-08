@@ -1,6 +1,11 @@
 // ballistics code by Conan
 // he saved me from having to learn quadratics :]
 
+// slightly edited version
+// * leading ignores gravity for jetting targets
+// * separated getProjectileVector and getProjectilePosition
+// * edited ground check to use a box search instead of a raycast
+
 function getProjectileVector(%target, %projVel, %projGravityMod, %initialPosition)
 {
     if (!isObject(%target))
@@ -35,12 +40,32 @@ function getProjectilePosition(%target, %projVel, %projGravityMod, %initialPosit
 }
 
 //support functions
+function boxEmpty(%pos, %box, %mask, %e0, %e1, %e2, %e3)
+{
+	initContainerBoxSearch(%pos, %box, %mask);
+	while(isObject(%col = containerSearchNext()))
+	{
+		if(%col == %e0 || %col == %e1 || %col == %e2 || %col == %e3)
+			continue;
+		
+		return false;
+	}
+
+	return true;
+}
+
 function calculateLeadLocation_Iterative(%obj, %pos0, %pos1, %speed0, %vel1, %gravity0, %diff)
 {
     %projectileGravity = %gravity0 * 9.81;
-    %masks = $TypeMasks::fxBrickObjectType | $Typemasks::StaticObjectType | $Typemasks::PlayerObjectType;
-    %downRay = containerRaycast(vectorAdd(%obj.getPosition(), "0 0 0.1"), vectorAdd(%obj.getPosition(), "0 0 -0.1"), %masks, %obj);
-    if (isObject(%downRay)) { %gravity = 0; }
+
+    %masksR = $Typemasks::StaticObjectType;
+    %masksB = $TypeMasks::fxBrickObjectType | $Typemasks::PlayerObjectType;
+
+    %downRay = containerRaycast(vectorAdd(%obj.getPosition(), "0 0 0.1"), vectorAdd(%obj.getPosition(), "0 0 -0.1"), %masksR, %obj);
+		%box = setWord(vectorScale(getWords(%obj.getObjectBox(), 3, 6), 1/2), 2, "0.1");
+		%air = boxEmpty(%obj.getPosition(), %box, %masksB, %obj);
+
+    if (isObject(%downRay) || !%air || (%obj.getType() & $TypeMasks::PlayerObjectType) && %obj.isJetting()) { %gravity = 0; }
     else { %gravity = 9.8; }
 
     %offset = "0 0 " @ %diff;
