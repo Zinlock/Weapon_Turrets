@@ -188,6 +188,14 @@ function Turret_TribalBaseArms::onAdd(%db, %obj)
 	%obj.idle = %obj.schedule(2000, tbIdleReset);
 }
 
+function Turret_TribalBaseStand::turretCanMount(%db, %pl, %img)
+{
+	if(!%img.isTribalBaseBarrel)
+		return false;
+
+	return Parent::turretCanMount(%db, %pl, %img);
+}
+
 function Turret_TribalBaseStand::turretCanTrigger(%db, %pl, %target)
 {
 	%r = Parent::turretCanTrigger(%db, %pl, %target);

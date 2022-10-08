@@ -17,8 +17,9 @@ exec("Add-Ons/Support_ShapelinesV2/server.cs");
 exec("./ballistics.cs");
 exec("./main.cs");
 
+exec("./Turret_Base.cs");
+exec("./Turret_Barrels.cs");
 exec("./Weapon_TurretPulse.cs");
 exec("./Weapon_TurretPlasma.cs");
 exec("./Weapon_TurretMortar.cs");
 exec("./Weapon_TurretVulcan.cs");
-exec("./Turret_Base.cs");

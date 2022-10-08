@@ -1,10 +1,3 @@
-datablock AudioProfile(Turret_TribalBarrelMountSound)
-{
-	fileName = "./wav/base_barrel_equip.wav";
-	description = AudioDefault3D;
-	preload = true;
-};
-
 datablock AudioProfile(Turret_TribalPulseTriggerSound)
 {
 	fileName = "./wav/base_pulse_trigger.wav";
@@ -221,72 +214,6 @@ datablock ItemData(Turret_TribalPulseItem)
 	isTribalBaseBarrel = true;
 };
 
-datablock ShapeBaseImageData(Turret_BarrelPlaceImage)
-{
-	mountPoint = 0;
-
-	armReady = false;
-
-	emap = 0;
-
-	shapeFile = "base/data/shapes/empty.dts";
-	item = "";
-
-	stateName[0] = "activate";
-	stateSequence[0] = "activate";
-	stateTimeoutValue[0] = 0.1;
-	stateTransitionOnTimeout[0] = "ready";
-
-	stateName[1] = "ready";
-	stateSequence[1] = "root";
-	stateScript[1]  = "onReady";
-	stateTransitionOnTriggerDown[1] = "trigger";
-	stateTimeoutValue[1] = 0.1;
-	stateTransitionOnTimeout[1] = "ready";
-
-	stateName[2] = "trigger";
-	stateScript[2] = "onFire";
-	stateTransitionOnTriggerUp[2] = "ready";
-};
-
-function Turret_BarrelPlaceImage::onReady(%this, %obj, %slot)
-{
-	if(!%obj.tool[%obj.currTool].isTurretBarrel)
-	{
-		%obj.unmountImage(%slot);
-		return;
-	}
-	
-	if(isObject(%obj.client))
-		%obj.client.centerPrint("<color:FD9322><font:impact:24>" @ %obj.tool[%obj.currTool].turretTitle @ "<br><color:FFFFFF><font:arial:16>" @ %obj.tool[%obj.currTool].turretDesc @ "<br>Click on a turret to mount", 1);
-}
-
-function Turret_BarrelPlaceImage::onFire(%this, %obj, %slot)
-{
-	if(!%obj.tool[%obj.currTool].isTurretBarrel)
-	{
-		%obj.unmountImage(%slot);
-		return;
-	}
-	
-	%ray = containerRayCast(%obj.getEyePoint(), vectorAdd(%obj.getEyePoint(), vectorScale(%obj.getLookVector(), 4)), $TypeMasks::PlayerObjectType | $Turret_WallMask, %obj);
-	if(!isObject(%ray) || %ray.ignoreBarrelMount || %ray.getClassName() !$= "AIPlayer" || !isObject(%ray.turretHead) || %ray.isDestroyed || isObject(%ray.turretHead.target))
-		return;
-	
-	if(%ray.turretHead.getDataBlock().isTurretHead && %ray.turretHead.getMountedImage(0) != %obj.tool[%obj.currTool].turretImage.getId())
-	{
-		%img = %obj.tool[%obj.currTool].turretImage;
-		%ray.turretHead.mountImage(%img, 0);
-		%ray.turretHead.triggerTeam = %img.triggerTeam;
-		%ray.turretHead.triggerHeal = %img.triggerHeal;
-
-		%obj.weaponCount--;
-		%obj.tool[%obj.currTool] = 0;
-		messageClient(%obj.client, 'MsgItemPickup', '', %obj.currTool, 0);
-		%obj.unmountImage(%slot);
-	}
-}
-
 datablock ShapeBaseImageData(Turret_TribalPulseImage)
 {
 	mountPoint = 0;
@@ -375,34 +302,3 @@ function Turret_TribalPulseImage::onFire1(%img, %obj, %slot)
 }
 
 function Turret_TribalPulseImage::onFire2(%img, %obj, %slot) { Turret_TribalPulseImage::onFire1(%img, %obj, %slot); }
-
-function TurretBarrel::onAdd(%db, %item)
-{
-	Weapon::onAdd(%db, %item);
-
-	%item.playThread(0, rootClose);
-}
-
-function TurretImage::canTrigger(%img, %obj, %slot, %target)
-{
-	if(%target.isCloaked)
-		return false;
-	
-	if(vectorDist(%obj.getMuzzlePoint(%slot), %target.getCenterPos()) > %img.triggerDist)
-		return false;
-	
-	return true;
-}
-
-function TurretImage::getAimPoint(%img, %obj, %slot, %target)
-{
-	// return ProjectilePredict(%obj.getMuzzlePoint(%slot), %img.projectileSpeed, %target.getCenterPos(), %target.getVelocity(), %img.projectile.gravityMod);
-
-	%grav = %img.projectile.gravityMod;
-	%pos = %obj.getMuzzlePoint(%slot);
-	%targ = getProjectilePosition(%target, %img.projectileSpeed, %grav, %pos);
-	%dist = vectorDist(%pos, %targ);
-	%time = %dist / %img.projectileSpeed;
-
-	return vectorAdd(%targ, "0 0 " @ ((getWord(%target.getObjectBox(), 5) / 8) * (%time * %grav + (1 - %grav)))); // this is dumb, but it works
-}
