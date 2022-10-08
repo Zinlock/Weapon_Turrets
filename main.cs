@@ -513,6 +513,14 @@ function ShapeBase::getHigherPos(%obj)
 // 	return %npos;
 // }
 
+function Player::isJetting(%pl)
+{
+	if(%pl.jetDown)
+		return (%pl.getEnergyLevel() > %pl.getDataBlock().minJetEnergy);
+
+	return false;
+}
+
 package TurretPackMain
 {
 	function Armor::onAdd(%db, %pl)
@@ -551,6 +559,14 @@ package TurretPackMain
 			%pl.schedule(250, setImageTrigger, 2, 0);
 			%pl.schedule(250, setImageTrigger, 3, 0);
 		}
+	}
+
+	function Armor::onTrigger(%db, %pl, %trig, %val)
+	{
+		if(%trig == 4)
+			%pl.jetDown = %val;
+
+		return Parent::onTrigger(%db, %pl, %trig, %val);
 	}
 
 	function AIPlayer::AEDumpAmmo(%pl)
