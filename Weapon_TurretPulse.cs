@@ -1,20 +1,20 @@
 datablock AudioProfile(Turret_TribalPulseTriggerSound)
 {
-	fileName = "./wav/base_pulse_trigger.wav";
+	fileName = "./wav/base_pulse_triggerN.wav";
 	description = AudioDefault3D;
 	preload = true;
 };
 
 datablock AudioProfile(Turret_TribalPulseFireSound)
 {
-	fileName = "./wav/pulse_fire.wav";
+	fileName = "./wav/pulse_fireN.wav";
 	description = AudioDefault3D;
 	preload = true;
 };
 
 datablock AudioProfile(Turret_TribalPulseImpactSound)
 {
-	fileName = "./wav/pulse_impact.wav";
+	fileName = "./wav/pulse_impactN.wav";
 	description = AudioDefault3D;
 	preload = true;
 };
