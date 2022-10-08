@@ -365,7 +365,7 @@ function Turret_TribalPulseImage::onFire1(%img, %obj, %slot)
 	if(mRadToDeg(mAcos(vectorDot(%vec, %obj.aimVector))) < %img.projectileTolerance)
 		%vec = %obj.aimVector;
 
-	ProjectileFire(%img.projectile, %obj.getMuzzlePoint(%slot), %vec, %img.projectileSpread, %img.projectileCount, %slot, %src, %cli, %img.projectileSpeed);
+	ProjectileFire(%img.projectile, %obj.getSlotTransform(0), %vec, %img.projectileSpread, %img.projectileCount, %slot, %src, %cli, %img.projectileSpeed);
 
 	if(isObject(%img.fireSound))
 	{
