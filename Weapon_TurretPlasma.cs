@@ -260,7 +260,7 @@ datablock ShapeBaseImageData(Turret_TribalPlasmaImage : Turret_TribalPulseImage)
 	triggerSound = Turret_TribalPlasmaTriggerSound;
 	fireSound = Turret_TribalPlasmaFireSound;
 
-	triggerTime = 750;
+	triggerTime = 1000;
 	triggerDist = 150;
 	triggerTeam = false;
 	triggerHeal = false;
