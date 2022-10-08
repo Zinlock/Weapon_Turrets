@@ -14,8 +14,10 @@ function tt(%path)
 
 exec("Add-Ons/Support_ShapelinesV2/server.cs");
 
+exec("./ballistics.cs");
 exec("./main.cs");
 
 exec("./Weapon_TurretPulse.cs");
 exec("./Weapon_TurretPlasma.cs");
+exec("./Weapon_TurretMortar.cs");
 exec("./Turret_Base.cs");

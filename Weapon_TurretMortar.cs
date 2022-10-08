@@ -1,25 +1,18 @@
-datablock AudioProfile(Turret_TribalPlasmaTriggerSound)
+datablock AudioProfile(Turret_TribalMortarFireSound)
 {
-	fileName = "./wav/base_plasma_trigger.wav";
+	fileName = "./wav/mortar_fire.wav";
 	description = AudioDefault3D;
 	preload = true;
 };
 
-datablock AudioProfile(Turret_TribalPlasmaFireSound)
+datablock AudioProfile(Turret_TribalMortarImpactSound)
 {
-	fileName = "./wav/plasma_fire.wav";
+	fileName = "./wav/mortar_impact.wav";
 	description = AudioDefault3D;
 	preload = true;
 };
 
-datablock AudioProfile(Turret_TribalPlasmaImpactSound)
-{
-	fileName = "./wav/plasma_impact.wav";
-	description = AudioDefault3D;
-	preload = true;
-};
-
-datablock ParticleData(Turret_TribalPlasmaSmokeParticle)
+datablock ParticleData(Turret_TribalMortarSmokeParticle)
 {
 	dragCoefficient		= 3.5;
 	windCoefficient		= 3.5;
@@ -52,7 +45,7 @@ datablock ParticleData(Turret_TribalPlasmaSmokeParticle)
 	times[3]	= 1.0;
 };
 
-datablock ParticleEmitterData(Turret_TribalPlasmaSmokeEmitter)
+datablock ParticleEmitterData(Turret_TribalMortarSmokeEmitter)
 {
 	ejectionPeriodMS = 2;
 	periodVarianceMS = 0;
@@ -64,10 +57,10 @@ datablock ParticleEmitterData(Turret_TribalPlasmaSmokeEmitter)
 	phiReferenceVel  = 0;
 	phiVariance      = 360;
 	overrideAdvance = false;
-	particles = "Turret_TribalPlasmaSmokeParticle";
+	particles = "Turret_TribalMortarSmokeParticle";
 };
 
-datablock ParticleData(Turret_TribalPlasmaExplosionParticle)
+datablock ParticleData(Turret_TribalMortarExplosionParticle)
 {
 	dragCoefficient		= 3.5;
 	windCoefficient		= 3.5;
@@ -100,7 +93,7 @@ datablock ParticleData(Turret_TribalPlasmaExplosionParticle)
 	times[3]	= 1.0;
 };
 
-datablock ParticleEmitterData(Turret_TribalPlasmaExplosionEmitter)
+datablock ParticleEmitterData(Turret_TribalMortarExplosionEmitter)
 {
 	ejectionPeriodMS = 2;
 	periodVarianceMS = 0;
@@ -112,10 +105,10 @@ datablock ParticleEmitterData(Turret_TribalPlasmaExplosionEmitter)
 	phiReferenceVel  = 0;
 	phiVariance      = 360;
 	overrideAdvance = false;
-	particles = "Turret_TribalPlasmaExplosionParticle";
+	particles = "Turret_TribalMortarExplosionParticle";
 };
 
-datablock ParticleData(Turret_TribalPlasmaParticle)
+datablock ParticleData(Turret_TribalMortarParticle)
 {
 	dragCoefficient		= 3.5;
 	windCoefficient		= 3.5;
@@ -148,7 +141,7 @@ datablock ParticleData(Turret_TribalPlasmaParticle)
 	times[3]	= 1.0;
 };
 
-datablock ParticleEmitterData(Turret_TribalPlasmaEmitter)
+datablock ParticleEmitterData(Turret_TribalMortarEmitter)
 {
 	ejectionPeriodMS = 2;
 	periodVarianceMS = 0;
@@ -160,21 +153,21 @@ datablock ParticleEmitterData(Turret_TribalPlasmaEmitter)
 	phiReferenceVel  = 0;
 	phiVariance      = 360;
 	overrideAdvance = false;
-	particles = "Turret_TribalPlasmaParticle";
+	particles = "Turret_TribalMortarParticle";
 };
 
-datablock ExplosionData(Turret_TribalPlasmaExplosion)
+datablock ExplosionData(Turret_TribalMortarExplosion)
 {
 	explosionShape = "Add-Ons/Weapon_Rocket_Launcher/explosionSphere1.dts";
-	soundProfile = Turret_TribalPlasmaImpactSound;
+	soundProfile = Turret_TribalMortarImpactSound;
 
 	lifeTimeMS = 350;
 
-	particleEmitter = Turret_TribalPlasmaExplosionEmitter;
+	particleEmitter = Turret_TribalMortarExplosionEmitter;
 	particleDensity = 100;
 	particleRadius = 0.0;
 
-	emitter[0] = Turret_TribalPlasmaSmokeEmitter;
+	emitter[0] = Turret_TribalMortarSmokeEmitter;
 
 	faceViewer     = true;
 	explosionScale = "1 1 1";
@@ -190,23 +183,23 @@ datablock ExplosionData(Turret_TribalPlasmaExplosion)
 	lightStartColor = "1 1 0 1";
 	lightEndColor = "0 0 0 0";
 
-	damageRadius = 10;
-	radiusDamage = 35;
+	damageRadius = 12;
+	radiusDamage = 60;
 
 	impulseRadius = 10;
 	impulseForce = 500;
 };
 
-datablock ProjectileData(Turret_TribalPlasmaProjectile)
+datablock ProjectileData(Turret_TribalMortarProjectile)
 {
 	projectileShapeName = "base/data/shapes/empty.dts";
-	directDamage        = 10;
+	directDamage        = 20;
 	directDamageType = $DamageType::AE;
 	radiusDamageType = $DamageType::AE;
 	impactImpulse	   = 300;
 	verticalImpulse	   = 100;
-	explosion           = Turret_TribalPlasmaExplosion;
-	particleEmitter     = Turret_TribalPlasmaEmitter;
+	explosion           = Turret_TribalMortarExplosion;
+	particleEmitter     = Turret_TribalMortarEmitter;
 
 	brickExplosionRadius = 6;
 	brickExplosionImpact = true;          //destroy a brick if we hit it directly?
@@ -223,10 +216,10 @@ datablock ProjectileData(Turret_TribalPlasmaProjectile)
 	armingDelay         = 35;
 	lifetime            = 6000;
 	fadeDelay           = 5990;
-	bounceElasticity    = 0.5;
-	bounceFriction       = 0.20;
-	isBallistic         = false;
-	gravityMod = 0.0;
+	bounceElasticity    = 0.1;
+	bounceFriction       = 0.5;
+	isBallistic         = true;
+	gravityMod = 1.0;
 
 	hasLight    = true;
 	lightRadius = 4.5;
@@ -235,40 +228,40 @@ datablock ProjectileData(Turret_TribalPlasmaProjectile)
 	uiName = "";
 };
 
-datablock ItemData(Turret_TribalPlasmaItem : Turret_TribalPulseItem)
+datablock ItemData(Turret_TribalMortarItem : Turret_TribalPulseItem)
 {
-	shapeFile = "./dts/baseturret_plasma.dts";
+	shapeFile = "./dts/baseturret_mortar.dts";
 
-	uiName = "TB: Plasma";
-	iconName = "./ico/plasma";
+	uiName = "TB: Mortar";
+	iconName = "./ico/mortar";
 
 	doColorShift = true;
 	colorShiftColor = "0.9 0.9 0.9 1";
 
-	turretImage = Turret_TribalPlasmaImage;
-	turretTitle = "Plasma Barrel";
-	turretDesc = "Slow, but strong<br>Deals bonus damage to vehicles";
+	turretImage = Turret_TribalMortarImage;
+	turretTitle = "Mortar Barrel";
+	turretDesc = "Slow, but strong<br>Can't target flying vehicles<br>Deals bonus damage to vehicles";
 };
 
-datablock ShapeBaseImageData(Turret_TribalPlasmaImage : Turret_TribalPulseImage)
+datablock ShapeBaseImageData(Turret_TribalMortarImage : Turret_TribalPulseImage)
 {
-	shapeFile = "./dts/baseturret_plasma.dts";
+	shapeFile = "./dts/baseturret_mortar.dts";
 
 	doColorShift = true;
 	colorShiftColor = "0.9 0.9 0.9 1.0";
 
 	triggerSound = Turret_TribalPlasmaTriggerSound;
-	fireSound = Turret_TribalPlasmaFireSound;
+	fireSound = Turret_TribalMortarFireSound;
 
-	triggerTime = 750;
-	triggerDist = 150;
+	triggerTime = 1500;
+	triggerDist = 250;
 	triggerTeam = false;
 	triggerHeal = false;
 	
-	projectile = Turret_TribalPlasmaProjectile;
+	projectile = Turret_TribalMortarProjectile;
 	projectileSpread = 0;
 	projectileCount = 1;
-	projectileSpeed = 100;
+	projectileSpeed = 50;
 	projectileTolerance = 15;
 
 	stateName[0] = "activate";
@@ -284,14 +277,12 @@ datablock ShapeBaseImageData(Turret_TribalPlasmaImage : Turret_TribalPulseImage)
 	stateName[2] = "fire";
 	stateScript[2] = "onFire";
 	stateTransitionOnTimeout[2] = "delay";
-	stateTimeoutValue[2] = 1.25;
+	stateTimeoutValue[2] = 1.0;
 	stateSequence[2] = "fire";
 	
-	stateName[4] = "delay";
-	stateTransitionOnTimeout[4] = "ready";
-	stateTimeoutValue[4] = 0.1;
-	stateTransitionOnTriggerDown[4] = "fire";
-	stateTransitionOnTriggerUp[4] = "ready";
+	stateName[3] = "delay";
+	stateTransitionOnTimeout[3] = "ready";
+	stateTimeoutValue[3] = 1.2;
 };
 
-function Turret_TribalPlasmaImage::onFire(%img, %obj, %slot) { Turret_TribalPulseImage::onFire1(%img, %obj, %slot); }
+function Turret_TribalMortarImage::onFire(%img, %obj, %slot) { Turret_TribalPulseImage::onFire1(%img, %obj, %slot); }

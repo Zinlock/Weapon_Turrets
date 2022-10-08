@@ -5,7 +5,7 @@
 $Turret_TargetMask = $TypeMasks::PlayerObjectType | $TypeMasks::VehicleObjectType | $TypeMasks::ItemObjectType | $TypeMasks::ProjectileObjectType;
 $Turret_WallMask = $TypeMasks::fxBrickObjectType | $TypeMasks::VehicleObjectType | $TypeMasks::StaticObjectType | $TypeMasks::InteriorObjectType | $TypeMasks::TerrainObjectType;
 
-$Turret_LeadDistance = 0.125; // compensate for the bot turning speed
+// $Turret_LeadDistance = 0.125; // compensate for the bot turning speed
 
 function turret(%pos)
 {
@@ -59,7 +59,7 @@ function Armor::turretCanTrigger(%db, %pl, %target)
 	if(vectorDist(%pl.getHackPosition(), %target.getCenterPos()) > %db.TurretLookRange || !%db.turretCanSee(%pl, %target) || %pl.getDamagePercent() >= 1.0)
 		return 0;
 	
-	if(%target.isCloaked)
+	if(isObject(%img = %pl.getMountedImage(0)) && !%img.canTrigger(%pl, 0, %target))
 		return 0;
 
 	%tt = %pl.triggerTeam;
@@ -189,6 +189,16 @@ function Armor::turretOnRepaired(%db, %pl)
 		%pl.turretHead.targetLostTime = "";
 		%pl.turretHead.schedule(200, onTurretIdleTick);
 	}
+}
+
+function Armor::turretCanMount(%db, %pl, %src, %img)
+{
+	return true;
+}
+
+function AIPlayer::turretCanMount(%pl, %src, %img)
+{
+	return %pl.getDataBlock().turretCanMount(%pl, %src, %img);
 }
 
 function AIPlayer::onTurretTargetFound(%pl, %target)
@@ -465,37 +475,43 @@ function ShapeBase::getHigherPos(%obj)
 		return %obj.getWorldBoxCenter();
 }
 
-function ProjectilePredict(%posP, %velP, %posT, %velT) // this is a little silly, but at least it does work somewhat
-{
-	if(vectorLen(%velP) <= 0 || vectorLen(%velT) <= 0)
-		return %posT;
+// function ProjectilePredict(%posP, %velP, %posT, %velT, %grav)
+// {
+// 	if(vectorLen(%velP) <= 0)
+// 		return %posT;
 	
-	// %dvel = vectorDist(%velP, %velT);
-	// %dpos = vectorDist(%posP, %posT);
+// 	// %dvel = vectorDist(%velP, %velT);
+// 	// %dpos = vectorDist(%posP, %posT);
 
-	// %npos = vectorAdd(%posT, vectorScale(%velT, %dpos / %dvel));
+// 	// %npos = vectorAdd(%posT, vectorScale(%velT, %dpos / %dvel));
 
-	// %npos = vectorAdd(%npos, vectorScale(%velT, $Turret_LeadDistance));
+// 	// %npos = vectorAdd(%npos, vectorScale(%velT, $Turret_LeadDistance));
 	
-	// for(%i = 0; %i < 10; %i++)
-	// 	v = shot vector, calculated to hit p exactly
-	// 	t = distance / vectorLen(getWords(v, 0, 1)); //time it takes for the projectile to fly to p
-	// 	p = player position + player.velocity * t - ("0 0 " @ 2 * 9.8 * t); //calculating new p given the time
-		
-	for(%i = 0; %i < 10; %i++)
-		v = shot vector, calculated to hit p exactly
-		t = distance / vectorLen(getWords(v, 0, 1)); //time it takes for the projectile to fly to p
-		p = player position + player.velocity * t - ("0 0 " @ 2 * 9.8 * t); //calculating new p given the time
-
-	if($tlinedebug)
-	{
-		drawLine(%posP, %posT, "0 1 0 0.5", 0.1).schedule(500, delete);
-		drawLine(%posT, %npos, "0 1 0 0.5", 0.1).schedule(500, delete);
-		drawLine(%posP, %npos, "1 0 0 0.5", 0.1).schedule(500, delete);
-	}
+// 	// for(%i = 0; %i < 10; %i++)
+// 	// 	v = shot vector, calculated to hit p exactly
+// 	// 	t = distance / vectorLen(getWords(v, 0, 1)); //time it takes for the projectile to fly to p
+// 	// 	p = player position + player.velocity * t - ("0 0 " @ 2 * 9.8 * t); //calculating new p given the time
 	
-	return %npos;
-}
+// 	%npos = %posT;
+
+// 	for(%i = 0; %i < 10; %i++)
+// 	{
+// 		%vec = vectorScale(vectorNormalize(vectorSub(%npos, %posP)), %velP);
+// 		%time = vectorDist(%posP, %npos) / vectorLen(getWords(%vec, 0, 1));
+// 		%npos = vectorSub(vectorAdd(%npos, vectorScale(%velT, %time)), ("0 0 " @ -2 * %grav * 9.8 * %time));
+// 	}
+
+// 	// %npos = vectorAdd(%npos, %posP);
+
+// 	if($tlinedebug)
+// 	{
+// 		drawLine(%posP, %posT, "0 1 0 0.5", 0.1).schedule(500, delete);
+// 		drawLine(%posT, %npos, "0 1 0 0.5", 0.1).schedule(500, delete);
+// 		drawLine(%posP, %npos, "1 0 0 0.5", 0.1).schedule(500, delete);
+// 	}
+	
+// 	return %npos;
+// }
 
 package TurretPackMain
 {
@@ -530,10 +546,10 @@ package TurretPackMain
 			cancel(%pl.turretIdle);
 			cancel(%pl.turretTarget);
 
-			%pl.setImageTrigger(0,0);
-			%pl.setImageTrigger(1,0);
-			%pl.setImageTrigger(2,0);
-			%pl.setImageTrigger(3,0);
+			%pl.schedule(250, setImageTrigger, 0, 0);
+			%pl.schedule(250, setImageTrigger, 1, 0);
+			%pl.schedule(250, setImageTrigger, 2, 0);
+			%pl.schedule(250, setImageTrigger, 3, 0);
 		}
 	}
 
@@ -559,6 +575,9 @@ package TurretPackMain
 	{
 		if(%db.isTurretArmor)
 		{
+			if(%src == %pl || %src.sourceObject == %pl)
+				return;
+
 			if(%pos $= "")
 				%pos = %pl.getHackPosition();
 			

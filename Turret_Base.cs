@@ -56,7 +56,7 @@ datablock PlayerData(Turret_TribalBaseArms : Turret_TribalBaseStand) // root idl
 {
 	isTurretHead = true;
 	TurretProjectile = -1;
-	TurretLookRange = 64;
+	TurretLookRange = 128;
 	TurretLookTime = 250;
 	TurretLookMask = $TypeMasks::PlayerObjectType | $TypeMasks::VehicleObjectType;
 	TurretThinkTime = 100;
@@ -206,7 +206,9 @@ function Turret_TribalBaseArms::turretOnTargetFound(%db, %pl, %target)
 	if(isEventPending(%pl.idle))
 	{
 		cancel(%pl.idle);
-		%pl.setImageTrigger(0, 1);
+		
+		%img = %pl.getMountedImage(0);
+		%pl.fire = %pl.schedule(%img.triggerTime, setImageTrigger, 0, 1);
 	}
 	else
 	{
@@ -233,9 +235,9 @@ function Turret_TribalBaseArms::turretOnTargetLost(%db, %pl, %target)
 function Turret_TribalBaseArms::turretOnTargetTick(%db, %pl, %target)
 {
 	%img = %pl.getMountedImage(0);
-	%pos = ProjectilePredict(%pl.getMuzzlePoint(0), %img.projectileSpeed, %target.getCenterPos(), %target.getVelocity());
+	%pos = %img.getAimPoint(%pl, 0, %target); //ProjectilePredict(%pl.getMuzzlePoint(0), %img.projectileSpeed, %target.getCenterPos(), %target.getVelocity(), %img.projectileGravity);
 
-	%pl.aimVector = vectorNormalize(vectorSub(%target.getCenterPos(), %pl.getMuzzlePoint(0)));
+	%pl.aimVector = vectorNormalize(vectorSub(%pos, %pl.getMuzzlePoint(0)));
 	%pl.setAimPointHack(%pos);
 }
 
