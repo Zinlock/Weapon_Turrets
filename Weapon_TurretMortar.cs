@@ -17,9 +17,9 @@ datablock ParticleData(Turret_TribalMortarSmokeParticle)
 	dragCoefficient		= 3.5;
 	windCoefficient		= 3.5;
 	gravityCoefficient	= 0;
-	inheritedVelFactor	= -0.25;
+	inheritedVelFactor	= 0;
 	constantAcceleration	= 0.0;
-	lifetimeMS		= 1000;
+	lifetimeMS		= 2500;
 	lifetimeVarianceMS	= 0;
 	spinSpeed		= 40.0;
 	spinRandomMin		= -40.0;
@@ -49,9 +49,9 @@ datablock ParticleEmitterData(Turret_TribalMortarSmokeEmitter)
 {
 	ejectionPeriodMS = 2;
 	periodVarianceMS = 0;
-	ejectionVelocity = 8;
-	velocityVariance = 7.0;
-	ejectionOffset   = 0.0;
+	ejectionVelocity = 26;
+	velocityVariance = 12.0;
+	ejectionOffset   = 0.5;
 	thetaMin         = 0;
 	thetaMax         = 180;
 	phiReferenceVel  = 0;
@@ -65,9 +65,9 @@ datablock ParticleData(Turret_TribalMortarExplosionParticle)
 	dragCoefficient		= 3.5;
 	windCoefficient		= 3.5;
 	gravityCoefficient	= 0;
-	inheritedVelFactor	= -0.25;
+	inheritedVelFactor	= 0;
 	constantAcceleration	= 0.0;
-	lifetimeMS		= 700;
+	lifetimeMS		= 1000;
 	lifetimeVarianceMS	= 0;
 	spinSpeed		= 40.0;
 	spinRandomMin		= -40.0;
@@ -78,9 +78,9 @@ datablock ParticleData(Turret_TribalMortarExplosionParticle)
 	textureName		= "base/data/particles/cloud";
 
 	colors[0]     = "1 1 1 0.5";
-	colors[1]     = "0.8 0.9 0.0 0.9";
-	colors[2]     = "0.5 0.1 0.0 0.2";
-	colors[3]     = "0.5 0.1 0.0 0.0";
+	colors[1]     = "0.1 0.9 0.0 0.9";
+	colors[2]     = "0.1 0.1 0.0 0.2";
+	colors[3]     = "0.1 0.1 0.0 0.0";
 
 	sizes[0]	= 4.2;
 	sizes[1]	= 6.2;
@@ -97,8 +97,8 @@ datablock ParticleEmitterData(Turret_TribalMortarExplosionEmitter)
 {
 	ejectionPeriodMS = 2;
 	periodVarianceMS = 0;
-	ejectionVelocity = 6;
-	velocityVariance = 5.0;
+	ejectionVelocity = 15;
+	velocityVariance = 7.0;
 	ejectionOffset   = 0.0;
 	thetaMin         = 0;
 	thetaMax         = 180;
@@ -112,28 +112,28 @@ datablock ParticleData(Turret_TribalMortarParticle)
 {
 	dragCoefficient		= 3.5;
 	windCoefficient		= 3.5;
-	gravityCoefficient	= 0;
-	inheritedVelFactor	= -0.25;
+	gravityCoefficient	= -0.25;
+	inheritedVelFactor	= 0.2;
 	constantAcceleration	= 0.0;
-	lifetimeMS		= 550;
+	lifetimeMS		= 2000;
 	lifetimeVarianceMS	= 0;
 	spinSpeed		= 400.0;
 	spinRandomMin		= -400.0;
 	spinRandomMax		= 400.0;
-	useInvAlpha		= false;
+	useInvAlpha		= true;
 	animateTexture		= false;
 
-	textureName		= "base/data/particles/dot";
+	textureName		= "base/data/particles/cloud";
 
-	colors[0]     = "1 1 0.35 0.1";
-	colors[1]     = "0.8 0.9 0.0 0.3";
-	colors[2]     = "0.5 0.1 0.0 0.1";
-	colors[3]     = "0.5 0.1 0.0 0.0";
+	colors[0]     = "0.3 0.5 0.3 0.5";
+	colors[1]     = "0.2 0.7 0.3 0.7";
+	colors[2]     = "0.2 0.1 0.1 0.4";
+	colors[3]     = "0.0 0.1 0.0 0.0";
 
-	sizes[0]	= 2.2;
-	sizes[1]	= 0.7;
-	sizes[2]	= 0.2;
-	sizes[3]	= 0.0;
+	sizes[0]	= 0.5;
+	sizes[1]	= 1.2;
+	sizes[2]	= 2.5;
+	sizes[3]	= 2.0;
 
 	times[0]	= 0.0;
 	times[1]	= 0.1;
@@ -143,7 +143,7 @@ datablock ParticleData(Turret_TribalMortarParticle)
 
 datablock ParticleEmitterData(Turret_TribalMortarEmitter)
 {
-	ejectionPeriodMS = 2;
+	ejectionPeriodMS = 15;
 	periodVarianceMS = 0;
 	ejectionVelocity = 0;
 	velocityVariance = 0.0;
@@ -165,7 +165,7 @@ datablock ExplosionData(Turret_TribalMortarExplosion)
 
 	particleEmitter = Turret_TribalMortarExplosionEmitter;
 	particleDensity = 100;
-	particleRadius = 0.0;
+	particleRadius = 4.0;
 
 	emitter[0] = Turret_TribalMortarSmokeEmitter;
 
@@ -180,29 +180,29 @@ datablock ExplosionData(Turret_TribalMortarExplosion)
 
 	lightStartRadius = 4;
 	lightEndRadius = 12;
-	lightStartColor = "1 1 0 1";
+	lightStartColor = "0 1 0 1";
 	lightEndColor = "0 0 0 0";
 
 	damageRadius = 12;
-	radiusDamage = 60;
+	radiusDamage = 90;
 
-	impulseRadius = 10;
+	impulseRadius = 14;
 	impulseForce = 500;
 };
 
 datablock ProjectileData(Turret_TribalMortarProjectile)
 {
-	projectileShapeName = "base/data/shapes/empty.dts";
-	directDamage        = 20;
+	projectileShapeName = "./dts/mortar_projectile.dts";
+	directDamage        = 0;
 	directDamageType = $DamageType::AE;
 	radiusDamageType = $DamageType::AE;
-	impactImpulse	   = 300;
-	verticalImpulse	   = 100;
+	impactImpulse	   = 0;
+	verticalImpulse	   = 0;
 	explosion           = Turret_TribalMortarExplosion;
 	particleEmitter     = Turret_TribalMortarEmitter;
 
 	brickExplosionRadius = 6;
-	brickExplosionImpact = true;          //destroy a brick if we hit it directly?
+	brickExplosionImpact = false;          //destroy a brick if we hit it directly?
 	brickExplosionForce  = 30;             
 	brickExplosionMaxVolume = 30;          //max volume of bricks that we can destroy
 	brickExplosionMaxVolumeFloating = 60;  //max volume of bricks that we can destroy if they aren't connected to the ground (should always be >= brickExplosionMaxVolume)
@@ -213,7 +213,7 @@ datablock ProjectileData(Turret_TribalMortarProjectile)
 	muzzleVelocity      = 100;
 	velInheritFactor    = 0;
 
-	armingDelay         = 35;
+	armingDelay         = 1000;
 	lifetime            = 6000;
 	fadeDelay           = 5990;
 	bounceElasticity    = 0.1;
@@ -222,8 +222,8 @@ datablock ProjectileData(Turret_TribalMortarProjectile)
 	gravityMod = 1.0;
 
 	hasLight    = true;
-	lightRadius = 4.5;
-	lightColor  = "1 1 0";
+	lightRadius = 6.5;
+	lightColor  = "0 1 0";
 
 	uiName = "";
 };
