@@ -136,6 +136,7 @@ datablock ShapeBaseImageData(Turret_TribalVulcanImage : Turret_TribalPulseImage)
 	fireSound = Turret_TribalVulcanFireSound;
 
 	triggerTime = 400;
+	triggerQuickTime = 200;
 	triggerDist = 100;
 	triggerTeam = false;
 	triggerHeal = false;

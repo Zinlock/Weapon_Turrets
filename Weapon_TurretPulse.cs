@@ -233,6 +233,7 @@ datablock ShapeBaseImageData(Turret_TribalPulseImage)
 	fireSound = Turret_TribalPulseFireSound;
 
 	triggerTime = 750;
+	triggerQuickTime = 400;
 	triggerDist = 150;
 	triggerWalk = false;  // triggers on grounded players
 	triggerJet = true;  // triggers on jetting players

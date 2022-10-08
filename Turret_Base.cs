@@ -216,7 +216,7 @@ function Turret_TribalBaseArms::turretOnTargetFound(%db, %pl, %target)
 		cancel(%pl.idle);
 		
 		%img = %pl.getMountedImage(0);
-		%pl.fire = %pl.schedule(%img.triggerTime, setImageTrigger, 0, 1);
+		%pl.fire = %pl.schedule(%img.triggerQuickTime, setImageTrigger, 0, 1);
 	}
 	else
 	{
