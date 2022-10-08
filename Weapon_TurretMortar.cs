@@ -187,7 +187,7 @@ datablock ExplosionData(Turret_TribalMortarExplosion)
 	radiusDamage = 90;
 
 	impulseRadius = 14;
-	impulseForce = 500;
+	impulseForce = 1500;
 };
 
 datablock ProjectileData(Turret_TribalMortarProjectile)
