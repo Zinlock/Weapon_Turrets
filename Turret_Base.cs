@@ -56,7 +56,7 @@ datablock PlayerData(Turret_TribalBaseArms : Turret_TribalBaseStand) // root idl
 {
 	isTurretHead = true;
 	TurretProjectile = -1;
-	TurretLookRange = 128;
+	TurretLookRange = 300;
 	TurretLookTime = 250;
 	TurretLookMask = $TypeMasks::PlayerObjectType | $TypeMasks::VehicleObjectType;
 	TurretThinkTime = 100;

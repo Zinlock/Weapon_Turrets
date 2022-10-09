@@ -137,7 +137,7 @@ datablock ShapeBaseImageData(Turret_TribalVulcanImage : Turret_TribalPulseImage)
 
 	triggerTime = 400;
 	triggerQuickTime = 200;
-	triggerDist = 100;
+	triggerDist = 125;
 	triggerTeam = false;
 	triggerHeal = false;
 	
