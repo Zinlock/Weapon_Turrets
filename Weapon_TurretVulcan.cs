@@ -78,7 +78,7 @@ datablock ProjectileData(Turret_TribalVulcanProjectile)
 	directDamage        = 4;
 	directDamageType = $DamageType::AE;
 	radiusDamageType = $DamageType::AE;
-	impactImpulse	   = 150;
+	impactImpulse	   = 75;
 	verticalImpulse	   = 100;
 	explosion           = Turret_TribalVulcanExplosion;
 	particleEmitter     = Turret_TribalVulcanEmitter;
