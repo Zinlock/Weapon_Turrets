@@ -150,7 +150,7 @@ datablock ShapeBaseImageData(Turret_TribalVulcanImage : Turret_TribalPulseImage)
 	projectile = Turret_TribalVulcanProjectile;
 	projectileSpread = 1.5;
 	projectileCount = 1;
-	projectileSpeed = 125;
+	projectileSpeed = 200;
 	projectileTolerance = 10;
 	projectileArc = false;
 
