@@ -67,7 +67,7 @@ function calculateLeadLocation_Iterative(%obj, %pos0, %pos1, %speed0, %vel1, %gr
 		%air = boxEmpty(%obj.getPosition(), %box, %masksB, %obj);
 
     if (isObject(%downRay) || !%air || (%obj.getType() & $TypeMasks::PlayerObjectType) && %obj.isJetting() ||
-	      %target.getClassName() $= "FlyingVehicle" || %target.getDatablock().lift > 0)
+	      %obj.getClassName() $= "FlyingVehicle" || %obj.getDatablock().lift > 0)
 				 { %gravity = 0; }
     else { %gravity = 9.8; }
 
