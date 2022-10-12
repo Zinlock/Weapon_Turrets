@@ -75,10 +75,11 @@ datablock PlayerData(Turret_TribalBaseArms : Turret_TribalBaseStand) // root idl
 function Turret_TribalBaseStand::turretOnDisabled(%db, %obj)
 {
 	Parent::turretOnDisabled(%db, %obj);
-
-	cancel(%obj.idle);	
-	cancel(%obj.tbi1);
-	cancel(%obj.tbi2);
+	
+	cancel(%obj.turretHead.fire);
+	cancel(%obj.turretHead.idle);	
+	cancel(%obj.turretHead.tbi1);
+	cancel(%obj.turretHead.tbi2);
 	
 	%obj.playThread(0, root);
 	%obj.playThread(1, root);
@@ -91,10 +92,10 @@ function Turret_TribalBaseStand::turretOnDestroyed(%db, %obj)
 {
 	Parent::turretOnDestroyed(%db, %obj);
 
-	cancel(%obj.fire);	
-	cancel(%obj.idle);
-	cancel(%obj.tbi1);
-	cancel(%obj.tbi2);
+	cancel(%obj.turretHead.fire);
+	cancel(%obj.turretHead.idle);	
+	cancel(%obj.turretHead.tbi1);
+	cancel(%obj.turretHead.tbi2);
 
 	%obj.playThread(0, rootClose);
 	%obj.playThread(1, root);

@@ -170,6 +170,11 @@ function Armor::turretOnDisabled(%db, %pl)
 {
 	cancel(%pl.turretHead.turretIdle);
 	cancel(%pl.turretHead.turretTarget);
+	
+	%pl.turretHead.setImageTrigger(0,0);
+	%pl.turretHead.setImageTrigger(1,0);
+	%pl.turretHead.setImageTrigger(2,0);
+	%pl.turretHead.setImageTrigger(3,0);
 }
 
 function Armor::turretOnRecovered(%db, %pl)
@@ -573,14 +578,6 @@ package TurretPackMain
 		{
 			if(isObject(%pl.turretHead))
 				%pl.turretHead.setDamageLevel(%pl.turretHead.getDataBlock().maxDamage);
-			
-			cancel(%pl.turretIdle);
-			cancel(%pl.turretTarget);
-
-			%pl.schedule(250, setImageTrigger, 0, 0);
-			%pl.schedule(250, setImageTrigger, 1, 0);
-			%pl.schedule(250, setImageTrigger, 2, 0);
-			%pl.schedule(250, setImageTrigger, 3, 0);
 		}
 	}
 
