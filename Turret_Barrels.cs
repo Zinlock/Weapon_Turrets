@@ -126,6 +126,9 @@ function TurretImage::canTrigger(%img, %obj, %slot, %target)
 	}
 	else
 	{
+		if(%target.isMounted())
+			return false;
+		
 		if(%img.triggerJet != %img.triggerWalk)
 		{
 			if(!isEventPending(%obj.tjl[%target]))
