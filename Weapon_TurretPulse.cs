@@ -236,7 +236,9 @@ datablock ShapeBaseImageData(Turret_TribalPulseImage)
 	triggerQuickTime = 400;
 	triggerDist = 175;
 	triggerWalk = false;  // triggers on grounded players
+	triggerWalkTime = 1000;  // time before target counts as walking
 	triggerJet = true;  // triggers on jetting players
+	triggerJetTime = 1000;  // time before target counts as jetting
 	triggerGround = false;  // triggers on grounded vehicles
 	triggerAir = true;  // triggers on flying vehicles
 	triggerTeam = false;

@@ -116,6 +116,31 @@ function TurretImage::canTrigger(%img, %obj, %slot, %target)
 	if(vectorDist(%obj.getMuzzlePoint(%slot), %target.getCenterPos()) > %img.triggerDist)
 		return false;
 	
+	if(!(%target.getType() & $TypeMasks::PlayerObjectType))
+	{
+		if(!%img.triggerAir && (%target.getClassName() $= "FlyingVehicle" || %target.getDatablock().lift > 0))
+			return false;
+		
+		if(!%img.triggerGround && %target.getClassName() $= "WheeledVehicle" && %target.getDataBlock().lift <= 0)
+			return false;
+	}
+	else
+	{
+		if(%img.triggerJet != %img.triggerWalk)
+		{
+			if(!isEventPending(%obj.tjl[%target]))
+				%obj.turretJetLoop(%target, %img.triggerJetTime, %img.triggerWalkTime);
+			
+			if(!%img.triggerJet && %obj.turretJetting(%target))
+				return false;
+			
+			if(!%img.triggerWalk && !%obj.turretJetting(%target))
+				return false;
+		}
+		else if(!%img.triggerJet)
+			return false;
+	}
+	
 	return true;
 }
 

@@ -256,6 +256,12 @@ datablock ShapeBaseImageData(Turret_TribalMortarImage : Turret_TribalPulseImage)
 	triggerTime = 1500;
 	triggerQuickTime = 650;
 	triggerDist = 175;
+	triggerWalk = true;
+	triggerWalkTime = 0;
+	triggerJet = true;
+	triggerJetTime = 0;
+	triggerGround = true;
+	triggerAir = false;
 	triggerTeam = false;
 	triggerHeal = false;
 	

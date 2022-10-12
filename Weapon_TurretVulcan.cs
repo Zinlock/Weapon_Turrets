@@ -122,7 +122,7 @@ datablock ItemData(Turret_TribalVulcanItem : Turret_TribalPulseItem)
 
 	turretImage = Turret_TribalVulcanImage;
 	turretTitle = "Vulcan Barrel";
-	turretDesc = "Fast, but weak<br>Deals bonus damage to players";
+	turretDesc = "Fast, but weak<br>Can't target flying vehicles<br>Deals bonus damage to players";
 };
 
 datablock ShapeBaseImageData(Turret_TribalVulcanImage : Turret_TribalPulseImage)
@@ -138,6 +138,12 @@ datablock ShapeBaseImageData(Turret_TribalVulcanImage : Turret_TribalPulseImage)
 	triggerTime = 400;
 	triggerQuickTime = 200;
 	triggerDist = 125;
+	triggerWalk = true;
+	triggerWalkTime = 0;
+	triggerJet = true;
+	triggerJetTime = 0;
+	triggerGround = true;
+	triggerAir = false;
 	triggerTeam = false;
 	triggerHeal = false;
 	

@@ -475,50 +475,73 @@ function ShapeBase::getHigherPos(%obj)
 		return %obj.getWorldBoxCenter();
 }
 
-// function ProjectilePredict(%posP, %velP, %posT, %velT, %grav)
-// {
-// 	if(vectorLen(%velP) <= 0)
-// 		return %posT;
-	
-// 	// %dvel = vectorDist(%velP, %velT);
-// 	// %dpos = vectorDist(%posP, %posT);
-
-// 	// %npos = vectorAdd(%posT, vectorScale(%velT, %dpos / %dvel));
-
-// 	// %npos = vectorAdd(%npos, vectorScale(%velT, $Turret_LeadDistance));
-	
-// 	// for(%i = 0; %i < 10; %i++)
-// 	// 	v = shot vector, calculated to hit p exactly
-// 	// 	t = distance / vectorLen(getWords(v, 0, 1)); //time it takes for the projectile to fly to p
-// 	// 	p = player position + player.velocity * t - ("0 0 " @ 2 * 9.8 * t); //calculating new p given the time
-	
-// 	%npos = %posT;
-
-// 	for(%i = 0; %i < 10; %i++)
-// 	{
-// 		%vec = vectorScale(vectorNormalize(vectorSub(%npos, %posP)), %velP);
-// 		%time = vectorDist(%posP, %npos) / vectorLen(getWords(%vec, 0, 1));
-// 		%npos = vectorSub(vectorAdd(%npos, vectorScale(%velT, %time)), ("0 0 " @ -2 * %grav * 9.8 * %time));
-// 	}
-
-// 	// %npos = vectorAdd(%npos, %posP);
-
-// 	if($tlinedebug)
-// 	{
-// 		drawLine(%posP, %posT, "0 1 0 0.5", 0.1).schedule(500, delete);
-// 		drawLine(%posT, %npos, "0 1 0 0.5", 0.1).schedule(500, delete);
-// 		drawLine(%posP, %npos, "1 0 0 0.5", 0.1).schedule(500, delete);
-// 	}
-	
-// 	return %npos;
-// }
-
 function Player::isJetting(%pl)
 {
-	if(%pl.jetDown)
-		return (%pl.getEnergyLevel() > %pl.getDataBlock().minJetEnergy);
+	return (%pl.jetDown && %pl.getEnergyLevel() > %pl.getDataBlock().minJetEnergy);
+}
 
-	return false;
+function AIPlayer::turretJetLoop(%pl, %targ, %minStart, %minEnd) // this sucks! but it works, so its ok
+{
+	cancel(%pl.tjl[%targ]);
+
+	if(!isObject(%targ) || %targ.getDamagePercent() >= 1.0 || %pl.isDisabled)
+	{
+		%pl.tj[%targ] = false;
+		%pl.tjs[%targ] = 0;
+		%pl.tje[%targ] = 0;
+		return;
+	}
+
+	if(%targ.isJetting())
+	{
+		if(%pl.tj[%targ])
+		{
+			%pl.tje[%targ] -= getSimTime() - %pl.ltj;
+
+			if(%pl.tje[%targ] <= 0)
+				%pl.tje[%targ] = 0;
+		}
+		else
+		{
+			%pl.tjs[%targ] += getSimTime() - %pl.ltj;
+
+			if(%pl.tjs[%targ] >= %minStart)
+			{
+				%pl.tj[%targ] = true;
+				%pl.tjs[%targ] = 0;
+				%pl.tje[%targ] = 0;
+			}
+		}
+	}
+	else
+	{
+		if(%pl.tj[%targ])
+		{
+			%pl.tje[%targ] += getSimTime() - %pl.ltj;
+
+			if(%pl.tje[%targ] >= %minEnd)
+			{
+				%pl.tj[%targ] = false;
+				%pl.tje[%targ] = 0;
+				%pl.tjs[%targ] = 0;
+			}
+		}
+		else
+		{
+			%pl.tjs[%targ] -= getSimTime() - %pl.ltj;
+
+			if(%pl.tjs[%targ] <= 0)
+				%pl.tjs[%targ] = 0;
+		}
+	}
+
+	%pl.ltj = getSimTime();
+	%pl.tjl[%targ] = %pl.schedule(100, turretJetLoop, %targ, %minStart, %minEnd);
+}
+
+function AIPlayer::turretJetting(%pl, %targ)
+{
+	return %pl.tj[%targ];
 }
 
 package TurretPackMain
