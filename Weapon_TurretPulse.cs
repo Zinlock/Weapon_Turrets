@@ -249,6 +249,7 @@ datablock ShapeBaseImageData(Turret_TribalPulseImage)
 	projectileCount = 1;
 	projectileSpeed = 200;
 	projectileTolerance = 15;
+	projectileArc = false;
 
 	stateName[0] = "activate";
 	stateSequence[0] = "activate";

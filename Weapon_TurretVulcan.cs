@@ -152,6 +152,7 @@ datablock ShapeBaseImageData(Turret_TribalVulcanImage : Turret_TribalPulseImage)
 	projectileCount = 1;
 	projectileSpeed = 125;
 	projectileTolerance = 10;
+	projectileArc = false;
 
 	casing = GunShellDebris;
 	shellExitDir        = "1.0 -0.3 1.0";

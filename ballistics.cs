@@ -5,8 +5,9 @@
 // * leading ignores gravity for jetting targets
 // * separated getProjectileVector and getProjectilePosition
 // * edited ground check to use a box search instead of a raycast
+// * added optional high arc mode
 
-function getProjectileVector(%target, %projVel, %projGravityMod, %initialPosition)
+function getProjectileVector(%target, %projVel, %projGravityMod, %initialPosition, %high)
 {
     if (!isObject(%target))
     {
@@ -14,11 +15,11 @@ function getProjectileVector(%target, %projVel, %projGravityMod, %initialPositio
     }
     else //need to lead target
     {
-        return vectorNormalize(vectorSub(getProjectilePosition(%target, %projVel, %projGravityMod, %initialPosition), %initialPosition));
+        return vectorNormalize(vectorSub(getProjectilePosition(%target, %projVel, %projGravityMod, %initialPosition, %high), %initialPosition));
     }
 }
 
-function getProjectilePosition(%target, %projVel, %projGravityMod, %initialPosition)
+function getProjectilePosition(%target, %projVel, %projGravityMod, %initialPosition, %high)
 {
     if (!isObject(%target))
     {
@@ -34,7 +35,7 @@ function getProjectilePosition(%target, %projVel, %projGravityMod, %initialPosit
         %targetVel = %target.getVelocity();
         %muzzleSpeed = %projVel;
 
-        %iterFinalPos = calculateLeadLocation_Iterative(%target, %initialPosition, %basePos, %muzzleSpeed, %targetVel, %projGravityMod, %diff);
+        %iterFinalPos = calculateLeadLocation_Iterative(%target, %initialPosition, %basePos, %muzzleSpeed, %targetVel, %projGravityMod, %diff, %high);
         return %iterFinalPos;
     }
 }
@@ -54,7 +55,7 @@ function boxEmpty(%pos, %box, %mask, %e0, %e1, %e2, %e3)
 	return true;
 }
 
-function calculateLeadLocation_Iterative(%obj, %pos0, %pos1, %speed0, %vel1, %gravity0, %diff)
+function calculateLeadLocation_Iterative(%obj, %pos0, %pos1, %speed0, %vel1, %gravity0, %diff, %high)
 {
     %projectileGravity = %gravity0 * 9.81;
 
@@ -85,7 +86,7 @@ function calculateLeadLocation_Iterative(%obj, %pos0, %pos1, %speed0, %vel1, %gr
         {
             %zDiff = getWord(%finalPos, 2) - getWord(%pos0, 2);
             %xyDiff = vectorDist(getWords(%finalPos, 0, 1), getWords(%pos0, 0, 1));
-            %theta = solveGravityProjectileTheta(%speed0, %xyDiff, %zDiff, %projectileGravity);
+            %theta = solveGravityProjectileTheta(%speed0, %xyDiff, %zDiff, %projectileGravity, %high);
             %nextTime = solveGravityProjectileTime(%theta, %xyDiff, %speed0);
         }
         %nextFinalPos = vectorAdd(calculateFutureGravityPosition(%obj, %pos1, %vel1, %nextTime, %gravity), %offset);
@@ -114,7 +115,7 @@ function calculateLeadLocation_Iterative(%obj, %pos0, %pos1, %speed0, %vel1, %gr
     {
         %zDiff = getWord(%finalPos, 2) - getWord(%pos0, 2);
         %xyDiff = vectorDist(getWords(%finalPos, 0, 1), getWords(%pos0, 0, 1));
-        %theta = solveGravityProjectileTheta(%speed0, %xyDiff, %zDiff, %projectileGravity);
+        %theta = solveGravityProjectileTheta(%speed0, %xyDiff, %zDiff, %projectileGravity, %high);
         %nextTime = solveGravityProjectileTime(%theta, %xyDiff, %speed0);
 
         %xyComp = mCos(%theta) * %speed0;
@@ -162,7 +163,7 @@ function solveQuadratic(%a, %b, %c)
 //https://www.forrestthewoods.com/blog/solving_ballistic_trajectories/assets/img/07.png
 //gravity positive value
 //%s = speed, %xy = horizontal distance, %z = vertical distance, %g = gravity
-function solveGravityProjectileTheta(%s, %xy, %z, %g)
+function solveGravityProjectileTheta(%s, %xy, %z, %g, %high)
 {
     %discriminant = mPow(%s, 4) - %g * (%g * %xy * %xy + 2 * %s * %s * %z);
     if (%discriminant <= 0)
@@ -171,7 +172,11 @@ function solveGravityProjectileTheta(%s, %xy, %z, %g)
     }
     %a0 = mAtan(((%s * %s) + mSqrt(%discriminant)) / %g / %xy, 1);
     %a1 = mAtan(((%s * %s) - mSqrt(%discriminant)) / %g / %xy, 1);
-    return %a1 SPC %a0; //return smaller theta first
+
+		if(!%high)
+			return %a1 SPC %a0; //return smaller theta first
+		else
+			return %a0 SPC %a1;
 }
 function solveGravityProjectileTime(%theta, %xyDiff, %speed)
 {

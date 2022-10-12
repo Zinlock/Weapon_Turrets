@@ -150,7 +150,7 @@ function TurretImage::getAimPoint(%img, %obj, %slot, %target)
 
 	%grav = %img.projectile.gravityMod;
 	%pos = %obj.getMuzzlePoint(%slot);
-	%targ = getProjectilePosition(%target, %img.projectileSpeed, %grav, %pos);
+	%targ = getProjectilePosition(%target, %img.projectileSpeed, %grav, %pos, %img.projectileArc);
 	%dist = vectorDist(%pos, %targ);
 	%time = %dist / %img.projectileSpeed;
 
