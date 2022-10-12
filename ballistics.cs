@@ -59,14 +59,16 @@ function calculateLeadLocation_Iterative(%obj, %pos0, %pos1, %speed0, %vel1, %gr
 {
     %projectileGravity = %gravity0 * 9.81;
 
-    %masksR = $Typemasks::StaticObjectType;
+    %masksR = $Typemasks::StaticObjectType | $TypeMasks::VehicleObjectType;
     %masksB = $TypeMasks::fxBrickObjectType | $Typemasks::PlayerObjectType;
 
-    %downRay = containerRaycast(vectorAdd(%obj.getPosition(), "0 0 0.1"), vectorAdd(%obj.getPosition(), "0 0 -0.1"), %masksR, %obj);
+    %downRay = containerRaycast(vectorAdd(%obj.getPosition(), "0 0 0.1"), vectorAdd(%obj.getPosition(), "0 0 -0.1"), %masksR, %obj, %obj.getObjectMount());
 		%box = setWord(vectorScale(getWords(%obj.getObjectBox(), 3, 6), 1/2), 2, "0.1");
 		%air = boxEmpty(%obj.getPosition(), %box, %masksB, %obj);
 
-    if (isObject(%downRay) || !%air || (%obj.getType() & $TypeMasks::PlayerObjectType) && %obj.isJetting()) { %gravity = 0; }
+    if (isObject(%downRay) || !%air || (%obj.getType() & $TypeMasks::PlayerObjectType) && %obj.isJetting() ||
+	      %target.getClassName() $= "FlyingVehicle" || %target.getDatablock().lift > 0)
+				 { %gravity = 0; }
     else { %gravity = 9.8; }
 
     %offset = "0 0 " @ %diff;
