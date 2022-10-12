@@ -679,6 +679,14 @@ package TurretPackMain
 		Parent::RemoveBody(%pl);
 	}
 
+	function WheeledVehicleData::onCollision(%this, %obj, %col, %vec, %speed)
+	{
+		if(%col.getDataBlock().isTurretArmor)
+			return;
+		
+		return Parent::onCollision(%this, %obj, %col, %vec, %speed);
+	}
+
 	function fxDtsBrick::spawnVehicle(%obj, %time)
 	{
 		%stop = 0;
