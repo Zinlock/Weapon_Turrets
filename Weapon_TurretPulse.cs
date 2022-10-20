@@ -210,8 +210,6 @@ datablock ItemData(Turret_TribalPulseItem)
 	turretImage = Turret_TribalPulseImage;
 	turretTitle = "Anti Air Barrel";
 	turretDesc = "Fast, but weak<br>Can't target grounded players or vehicles<br>Deals bonus damage to flying vehicles";
-
-	isTribalBaseBarrel = true;
 };
 
 datablock ShapeBaseImageData(Turret_TribalPulseImage)
@@ -222,7 +220,9 @@ datablock ShapeBaseImageData(Turret_TribalPulseImage)
 	emap = 0;
 
 	shapeFile = "./dts/baseturret_pulse.dts";
-	item = "";
+	item = Turret_TribalPulseItem;
+
+	isTribalBaseBarrel = true;
 
 	doColorShift = true;
 	colorShiftColor = "0.9 0.9 0.9 1.0";
