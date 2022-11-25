@@ -62,6 +62,9 @@ datablock ShapeBaseImageData(Turret_BarrelPlaceImage)
 	stateTransitionOnTriggerUp[2] = "ready";
 };
 
+function Turret_BarrelPlaceImage::onAltFire() {}
+function Turret_BarrelPlaceImage::onAltRelease() {}
+
 function Turret_BarrelPlaceImage::onReady(%this, %obj, %slot)
 {
 	if(!%obj.tool[%obj.currTool].isTurretBarrel)
