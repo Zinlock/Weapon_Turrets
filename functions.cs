@@ -127,10 +127,7 @@ function Armor::turretCanTrigger(%db, %pl, %target)
 
 function Armor::turretOnIdleTick(%db, %pl)
 {
-	// [!] debug stuff
 
-	if(isObject(%pl.powerGroup))
-		%pl.setShapeName(%pl.powerGroup @ " " @ %pl.powerGroup.groupName @ " " @ %pl.powerGroup.getPower(), 8564862);
 }
 
 function Armor::turretOnTargetTick(%db, %pl, %target)
@@ -228,10 +225,7 @@ function Armor::turretOnPowerLost(%db, %pl)
 
 function Armor::turretOnNoPowerTick(%db, %pl)
 {
-	// [!] debug stuff
 	
-	if(isObject(%pl.powerGroup))
-		%pl.setShapeName(%pl.powerGroup @ " " @ %pl.powerGroup.groupName @ " " @ %pl.powerGroup.getPower(), 8564862);
 }
 
 function Armor::turretOnPowerRestored(%db, %pl)
