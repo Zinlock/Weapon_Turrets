@@ -15,11 +15,16 @@ datablock PlayerData(Turret_TribalBaseStand : PlayerStandardArmor) // root rootC
 	className = Armor;
 	shapeFile = "./dts/baseturret_heavy.dts";
 
-	maxDamage = 300;
+	maxDamage = 150;
 	mass = 500000;
 
 	drag = 1;
 	density = 5;
+
+	rechargeRate = 20 / 31.25;
+	maxEnergy = 150;
+	energyShield = 0.95;
+	energyDelay = 2;
 
 	thirdPersonOnly = 1;
 	
@@ -72,9 +77,9 @@ datablock PlayerData(Turret_TribalBaseArms : Turret_TribalBaseStand) // root idl
 	UIName = "";
 };
 
-function Turret_TribalBaseStand::turretOnDisabled(%db, %obj)
+function Turret_TribalBaseStand::turretOnDisabled(%db, %obj, %src)
 {
-	Parent::turretOnDisabled(%db, %obj);
+	Parent::turretOnDisabled(%db, %obj, %src);
 	
 	cancel(%obj.turretHead.fire);
 	cancel(%obj.turretHead.idle);	
@@ -88,9 +93,9 @@ function Turret_TribalBaseStand::turretOnDisabled(%db, %obj)
 	%obj.turretHead.playThread(1, root);
 }
 
-function Turret_TribalBaseStand::turretOnDestroyed(%db, %obj)
+function Turret_TribalBaseStand::turretOnDestroyed(%db, %obj, %src)
 {
-	Parent::turretOnDestroyed(%db, %obj);
+	Parent::turretOnDestroyed(%db, %obj, %src);
 
 	cancel(%obj.turretHead.fire);
 	cancel(%obj.turretHead.idle);	
@@ -109,9 +114,9 @@ function Turret_TribalBaseStand::turretOnDestroyed(%db, %obj)
 	%obj.turretHead.unmountImage(0);
 }
 
-function Turret_TribalBaseStand::turretOnRecovered(%db, %obj)
+function Turret_TribalBaseStand::turretOnRecovered(%db, %obj, %src)
 {
-	Parent::turretOnRecovered(%db, %obj);
+	Parent::turretOnRecovered(%db, %obj, %src);
 	
 	%obj.playThread(0, root);
 	%obj.playThread(1, root);
@@ -124,11 +129,27 @@ function Turret_TribalBaseStand::turretOnRecovered(%db, %obj)
 	%obj.turretHead.mountImage(%obj.turretHead.lastImage, 0);
 }
 
-function Turret_TribalBaseStand::turretOnRepaired(%db, %obj)
+function Turret_TribalBaseStand::turretOnRepaired(%db, %obj, %src)
 {
 	%obj.turretHead.idle = %obj.turretHead.schedule(0, tbIdleReset);
 
-	Parent::turretOnRepaired(%db, %obj);
+	Parent::turretOnRepaired(%db, %obj, %src);
+}
+
+function Turret_TribalBaseArms::turretOnPowerLost(%db, %obj)
+{
+	Parent::turretOnPowerLost(%db, %obj);
+}
+
+function Turret_TribalBaseArms::turretOnPowerRestored(%db, %obj)
+{
+	cancel(%obj.fire);
+	cancel(%obj.idle);
+	cancel(%obj.tbi1);
+	cancel(%obj.tbi2);
+	%obj.tbIdleReset();
+
+	Parent::turretOnPowerRestored(%db, %obj);
 }
 
 function Turret_TribalBaseStand::onAdd(%db, %obj)
@@ -146,6 +167,8 @@ function Turret_TribalBaseStand::onAdd(%db, %obj)
 			triggerHeal = false;
 			isTribalBaseTurret = true;
 		};
+
+		%obj.isTribalBaseTurret = true;
 
 		%obj.mountObject(%obj.turretHead, 0);
 
@@ -189,7 +212,7 @@ function Turret_TribalBaseArms::onAdd(%db, %obj)
 	%obj.idle = %obj.schedule(2000, tbIdleReset);
 }
 
-function Turret_TribalBaseStand::turretCanMount(%db, %pl, %img)
+function Turret_TribalBaseArms::turretCanMount(%db, %pl, %img)
 {
 	if(!%img.isTribalBaseBarrel)
 		return false;
@@ -197,7 +220,7 @@ function Turret_TribalBaseStand::turretCanMount(%db, %pl, %img)
 	return Parent::turretCanMount(%db, %pl, %img);
 }
 
-function Turret_TribalBaseStand::turretCanTrigger(%db, %pl, %target)
+function Turret_TribalBaseArms::turretCanTrigger(%db, %pl, %target)
 {
 	%r = Parent::turretCanTrigger(%db, %pl, %target);
 
@@ -252,6 +275,9 @@ function Turret_TribalBaseArms::turretOnTargetTick(%db, %pl, %target)
 
 function AIPlayer::tbIdleReset(%pl)
 {
+	if(!%pl.isPowered)
+		return;
+
 	%pl.stopAudio(1);
 	%pl.playThread(0, idle);
 	%pl.setAimPointHack(vectorAdd(%pl.getEyePoint(), vectorScale(%pl.turretBase.getForwardVector(), 10)));
