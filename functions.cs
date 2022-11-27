@@ -73,7 +73,7 @@ function Armor::turretCanTrigger(%db, %pl, %target)
 			}
 			else if(isObject(%target.spawnBrick))
 			{
-				%dm = %src.slyrTeam.isAlliedTeam(%mg.teams.getTeamFromName(%target.spawnBrick.getControllingTeam()));
+				%dm = %pl.sourceClient.slyrTeam.isAlliedTeam(%mg.teams.getTeamFromName(%target.spawnBrick.getControllingTeam()));
 				if(%dm && !%tt || !%dm && %tt)
 					return 0;
 			}
