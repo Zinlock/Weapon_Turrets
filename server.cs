@@ -20,6 +20,8 @@ exec("./functions.cs");
 exec("./events.cs");
 exec("./power.cs");
 
+exec("./Explosion_Scrap.cs");
+exec("./Turret_Effects.cs");
 exec("./Turret_Base.cs");
 exec("./Turret_Deployable.cs");
 exec("./Turret_Barrels.cs");

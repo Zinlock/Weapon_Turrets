@@ -47,6 +47,26 @@ package TurretPackMain
 		return Parent::Pickup(%pl, %itm, %x);
 	}
 
+	function Armor::onRemove(%db, %pl)
+	{
+		if(%db.isTurretArmor)
+		{
+			for(%i = 0; %i < $maxTurretEmitters; %i++)
+			{
+				if(isObject(%o = %pl.powerParticle[%i]))
+					%o.delete();
+
+				if(isObject(%o = %pl.destroyedParticle[%i]))
+					%o.delete();
+				
+				if(isObject(%o = %pl.disabledParticle[%i]))
+					%o.delete();
+			}
+		}
+
+		Parent::onRemove(%db, %pl);
+	}
+
 	function Armor::onAdd(%db, %pl)
 	{
 		Parent::onAdd(%db, %pl);
@@ -127,6 +147,41 @@ package TurretPackMain
 
 				if(%erg > %pl.getEnergyLevel() && %erg > (%db.maxEnergy * 0.1))
 					%db.turretOnShieldBreak(%pl, %src);
+				
+				if(%pl.getEnergyLevel() > 5)
+				{
+					if(isObject(%db.energyShape))
+					{
+						%shape = %pl.lastEnergyShape;
+
+						if(!isObject(%shape))
+						{
+							%shape = new StaticShape() { datablock = %db.energyShape; };
+							%shape.cleanup = %shape.schedule(3000, delete);
+						}
+						else
+						{
+							cancel(%shape.cleanup);
+							%shape.cleanup = %shape.schedule(3000, delete);
+						}
+
+						%s = %db.energyScale;
+
+						if(%s <= 0)
+							%s = 1;
+
+						%shape.setScale(%s SPC %s SPC %s);
+
+						%dir = vectorNormalize(vectorSub(%pos, %pl.getHackPosition()));
+
+						%x = getWord(%dir,0) / 2;
+						%y = (getWord(%dir,1) + 1) / 2;
+						%z = getWord(%dir,2) / 2;
+
+						%shape.setTransform(%pl.getHackPosition() SPC VectorNormalize(%x SPC %y SPC %z) SPC mDegToRad(180));
+						%shape.playThread(0, hit);
+					}
+				}
 				
 				%pl.lastShieldHitEnergy = %pl.getEnergyLevel();
 				%pl.lastShieldHitTime = getSimTime();

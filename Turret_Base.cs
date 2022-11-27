@@ -1,3 +1,10 @@
+datablock AudioProfile(Turret_TribalDestroyedSound)
+{
+	fileName = "./wav/base_turret_destroy.wav";
+	description = AudioDefault3D;
+	preload = true;
+};
+
 datablock PlayerData(Turret_TribalBaseStand : PlayerStandardArmor) // root rootClose open close
 {
 	paintable = 1;
@@ -9,21 +16,35 @@ datablock PlayerData(Turret_TribalBaseStand : PlayerStandardArmor) // root rootC
 
 	disabledLevel = 0.8;
 
+	powerLostEmitter[0] = Turret_TribalNoPowerEmitter;
+	powerLostEmitter[1] = Turret_TribalNoPowerEmitter2;
+
+	disabledEmitter[0] = Turret_TribalDisabledEmitter;
+	disabledEmitter[1] = Turret_TribalNoPowerEmitter;
+	disabledEmitter[2] = Turret_TribalNoPowerEmitter2;
+
+	destroyedEmitter[0] = Turret_TribalDisabledEmitter;
+	destroyedEmitter[1] = Turret_TribalNoPowerEmitter2;
+	destroyedExplosion = Turret_TribalDestroyedProjectile;
+	destroyedSound = Turret_TribalDestroyedSound;
+
 	renderFirstPerson = false;
 	emap = false;
 
 	className = Armor;
 	shapeFile = "./dts/baseturret_heavy.dts";
 
-	maxDamage = 150;
+	maxDamage = 200;
 	mass = 500000;
 
 	drag = 1;
 	density = 5;
 
-	rechargeRate = 20 / 31.25;
-	maxEnergy = 150;
-	energyShield = 0.95;
+	rechargeRate = 12.5 / 31.25;
+	maxEnergy = 100;
+	energyShield = 1.0;
+	energyShape = Turret_EnergyShieldShape;
+	energyScale = 1.5;
 	energyDelay = 2;
 
 	thirdPersonOnly = 1;

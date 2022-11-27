@@ -1,3 +1,5 @@
+$maxTurretEmitters = 4;
+
 // datablock functions //
 
 function Armor::turretCanSee(%db, %pl, %target)
@@ -157,6 +159,52 @@ function Armor::turretOnDestroyed(%db, %pl, %src)
 		else
 			%pl.spawnBrick.onTurret(%pl, %src, "onTurretDestroyed");
 	}
+	
+	if(getSimTime() - %pl.lastExplosionTime > 2000)
+	{
+		%pl.lastExplosionTime = getSimTime();
+
+		if(isObject(%db.destroyedExplosion))
+		{
+				%p = new Projectile()
+				{
+					dataBlock = %db.destroyedExplosion;
+					initialPosition = %pl.getHackPosition();
+					initialVelocity = "0 0 1";
+				};
+
+				%p.explode();
+			}
+
+		if(isObject(%db.destroyedSound))
+			serverPlay3D(%db.destroyedSound, %pl.getHackPosition());
+	}
+
+	for(%i = 0; %i < $maxTurretEmitters; %i++)
+	{
+		if(isObject(%o = %pl.powerParticle[%i]))
+			%o.delete();
+
+		if(isObject(%o = %pl.disabledParticle[%i]))
+			%o.delete();
+
+		if(isObject(%db.destroyedEmitter[%i]))
+		{
+			if(isObject(%pl.destroyedParticle[%i]))
+				%pl.destroyedParticle[%i].delete();
+
+			%node = new ParticleEmitterNode()
+			{
+				datablock = GenericEmitterNode;
+				emitter = %db.destroyedEmitter[%i];
+				scale = "0 0 0";
+				position = %pl.getHackPosition();
+			};
+
+			%node.setColor("1.0 1.0 1.0 1.0");
+			%pl.destroyedParticle[%i] = %node;
+		}
+	}
 }
 
 function Armor::turretOnDisabled(%db, %pl, %src)
@@ -170,6 +218,29 @@ function Armor::turretOnDisabled(%db, %pl, %src)
 		%pl.turretHead.setImageTrigger(1,0);
 		%pl.turretHead.setImageTrigger(2,0);
 		%pl.turretHead.setImageTrigger(3,0);
+	}
+
+	for(%i = 0; %i < $maxTurretEmitters; %i++)
+	{
+		if(isObject(%o = %pl.powerParticle[%i]))
+			%o.delete();
+
+		if(isObject(%db.disabledEmitter[%i]))
+		{
+			if(isObject(%pl.disabledParticle[%i]))
+				%pl.disabledParticle[%i].delete();
+
+			%node = new ParticleEmitterNode()
+			{
+				datablock = GenericEmitterNode;
+				emitter = %db.disabledEmitter[%i];
+				scale = "0 0 0";
+				position = %pl.getHackPosition();
+			};
+			
+			%node.setColor("1.0 1.0 1.0 1.0");
+			%pl.disabledParticle[%i] = %node;
+		}
 	}
 	
 	if(isObject(%pl.spawnBrick) && !isObject(%pl.sourceClient))
@@ -190,6 +261,32 @@ function Armor::turretOnRecovered(%db, %pl, %src)
 		else
 			%pl.spawnBrick.onTurret(%pl, %src, "onTurretRecovered");
 	}
+	
+	for(%i = 0; %i < $maxTurretEmitters; %i++)
+	{
+		if(isObject(%o = %pl.powerParticle[%i]))
+			%o.delete();
+
+		if(isObject(%o = %pl.destroyedParticle[%i]))
+			%o.delete();
+
+		if(isObject(%db.disabledEmitter[%i]))
+		{
+			if(isObject(%pl.disabledParticle[%i]))
+				%pl.disabledParticle[%i].delete();
+
+			%node = new ParticleEmitterNode()
+			{
+				datablock = GenericEmitterNode;
+				emitter = %db.disabledEmitter[%i];
+				scale = "0 0 0";
+				position = %pl.getHackPosition();
+			};
+			
+			%node.setColor("1.0 1.0 1.0 1.0");
+			%pl.disabledParticle[%i] = %node;
+		}
+	}
 }
 
 function Armor::turretOnRepaired(%db, %pl, %src)
@@ -206,6 +303,11 @@ function Armor::turretOnRepaired(%db, %pl, %src)
 		%pl.turretHead.targetLostTime = "";
 		%pl.turretHead.schedule(200, onTurretIdleTick);
 	}
+
+	%head = %pl.turretHead;
+	
+	if(!isObject(%head))
+		%head = %pl;
 	
 	if(isObject(%pl.spawnBrick) && !isObject(%pl.sourceClient))
 	{
@@ -213,6 +315,35 @@ function Armor::turretOnRepaired(%db, %pl, %src)
 			%pl.spawnBrick.onTurret(%pl, %src, "onGeneratorRepaired");
 		else
 			%pl.spawnBrick.onTurret(%pl, %src, "onTurretRepaired");
+	}
+	
+	for(%i = 0; %i < $maxTurretEmitters; %i++)
+	{
+		if(isObject(%o = %pl.powerParticle[%i]))
+			%o.delete();
+
+		if(isObject(%o = %pl.destroyedParticle[%i]))
+			%o.delete();
+		
+		if(isObject(%o = %pl.disabledParticle[%i]))
+			%o.delete();
+
+		if(!%head.isPowered)
+		{
+			if(isObject(%db.powerLostEmitter[%i]))
+			{
+				%node = new ParticleEmitterNode()
+				{
+					datablock = GenericEmitterNode;
+					emitter = %db.powerLostEmitter[%i];
+					scale = "0 0 0";
+					position = %pl.getHackPosition();
+				};
+
+				%node.setColor("1.0 1.0 1.0 1.0");
+				%pl.powerParticle[%i] = %node;
+			}
+		}
 	}
 }
 
@@ -223,7 +354,35 @@ function Armor::turretOnShieldBreak(%db, %pl, %src)
 
 function Armor::turretOnPowerLost(%db, %pl)
 {
+	%base = %pl.turretBase;
+
+	if(!isObject(%base))
+		%base = %pl;
 	
+	%bdb = %base.getDataBlock();
+
+	if(!%base.isDisabled && !%base.isDestroyed)
+	{
+		for(%i = 0; %i < $maxTurretEmitters; %i++)
+		{
+			if(isObject(%bdb.powerLostEmitter[%i]))
+			{
+				if(isObject(%base.powerParticle[%i]))
+					%base.powerParticle[%i].delete();
+
+				%node = new ParticleEmitterNode()
+				{
+					datablock = GenericEmitterNode;
+					emitter = %bdb.powerLostEmitter[%i];
+					scale = "0 0 0";
+					position = %base.getHackPosition();
+				};
+
+				%node.setColor("1.0 1.0 1.0 1.0");
+				%base.powerParticle[%i] = %node;
+			}
+		}
+	}
 }
 
 function Armor::turretOnNoPowerTick(%db, %pl)
@@ -233,7 +392,19 @@ function Armor::turretOnNoPowerTick(%db, %pl)
 
 function Armor::turretOnPowerRestored(%db, %pl)
 {
-	
+	%base = %pl.turretBase;
+
+	if(!isObject(%base))
+		%base = %pl;
+
+	if(!%base.isDisabled && !%base.isDestroyed)
+	{
+		for(%i = 0; %i < $maxTurretEmitters; %i++)
+		{
+			if(isObject(%base.powerParticle[%i]))
+				%base.powerParticle[%i].delete();
+		}
+	}
 }
 
 function Armor::turretOnSpawn(%db, %pl)

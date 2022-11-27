@@ -1,3 +1,10 @@
+datablock AudioProfile(Turret_GeneratorDestroyedSound)
+{
+	fileName = "./wav/base_generator_destroy.wav";
+	description = AudioDefault3D;
+	preload = true;
+};
+
 datablock PlayerData(Turret_TribalBaseGenerator : PlayerStandardArmor)
 {
 	paintable = 1;
@@ -9,6 +16,15 @@ datablock PlayerData(Turret_TribalBaseGenerator : PlayerStandardArmor)
 	TurretLookTime = 0;
 	TurretLookMask = 0;
 	TurretThinkTime = 0;
+	
+	disabledEmitter[0] = Turret_TribalDisabledEmitter;
+	disabledEmitter[1] = Turret_TribalNoPowerEmitter;
+	disabledEmitter[2] = Turret_TribalNoPowerEmitter2;
+
+	destroyedEmitter[0] = Turret_TribalDisabledEmitter;
+	destroyedEmitter[1] = Turret_TribalNoPowerEmitter2;
+	destroyedExplosion = Turret_TribalDestroyedProjectile;
+	destroyedSound = Turret_GeneratorDestroyedSound;
 
 	isPowerGenerator = true;
 	generatorPower = 2;
