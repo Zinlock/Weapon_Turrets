@@ -99,7 +99,7 @@ package TurretPackMain
 	{
 		if(%db.isTurretArmor)
 		{
-			if(!%pl.takeSelfDmg && (%src == %pl || %src.sourceObject == %pl || %src.realSource == %pl || (%src.realSource == %pl.turretHead && isObject(%pl.turretHead))))
+			if(!%pl.takeSelfDmg && (%src == %pl || %src.sourceObject == %pl))
 				return;
 
 			if(%pos $= "")
