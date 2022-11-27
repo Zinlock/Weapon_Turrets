@@ -40,7 +40,7 @@ function Armor::turretCanTrigger(%db, %pl, %target)
 	if(%target.getDatablock().isTurretArmor)
 		return 0;
 	
-	if(vectorDist(%pl.getHackPosition(), %target.getCenterPos()) > %db.TurretLookRange || !%db.turretCanSee(%pl, %target) || %pl.getDamagePercent() >= 1.0)
+	if(vectorDist(%pl.getHackPosition(), %target.getCenterPos()) > %db.TurretLookRange || !%db.turretCanSee(%pl, %target) || %pl.getDamagePercent() >= 1.0 || %target.getDamagePercent() >= 1.0)
 		return 0;
 	
 	if(isObject(%img = %pl.getMountedImage(0)) && !%img.canTrigger(%pl, 0, %target))
@@ -50,6 +50,9 @@ function Armor::turretCanTrigger(%db, %pl, %target)
 	
 	if(isObject(%pl.sourceClient))
 	{
+		if(%pl.sourceClient == %target.client)
+			return 0;
+
 		%dm = minigameCanDamage(%pl.sourceClient, %target);
 		if(%dm != 1 && !%tt || %dm != 0 && %tt)
 			return 0;
@@ -225,7 +228,7 @@ function Armor::turretOnPowerLost(%db, %pl)
 
 function Armor::turretOnNoPowerTick(%db, %pl)
 {
-	
+
 }
 
 function Armor::turretOnPowerRestored(%db, %pl)
@@ -400,6 +403,14 @@ function AIPlayer::turretDamageCheck(%obj, %src)
 			%db.turretOnRepaired(%obj, %src);
 		}
 	}
+}
+
+function AIPlayer::turretKill(%obj)
+{
+	%obj.takeSelfDmg = true;
+	%obj.kill();
+	%obj.takeSelfDmg = false;
+	%obj.turretDamageCheck(0);
 }
 
 // support functions //
@@ -596,4 +607,56 @@ function AIPlayer::turretJetLoop(%pl, %targ, %minStart, %minEnd) // this sucks! 
 function AIPlayer::turretJetting(%pl, %targ)
 {
 	return %pl.tj[%targ];
+}
+
+function ProjectileFire(%db, %pos, %vec, %spd, %amt, %srcSlot, %srcObj, %srcCli, %vel)
+{	
+	%projectile = %db;
+	%spread = %spd / 1000;
+	%shellcount = %amt;
+
+	if(%vel $= "")
+		%vel = %projectile.muzzleVelocity;
+
+	%shells = -1;
+
+	for(%shell=0; %shell<%shellcount; %shell++)
+	{
+		%velocity = VectorScale(%vec, %vel);
+		%x = (getRandom() - 0.5) * 10 * 3.1415926 * %spread;
+		%y = (getRandom() - 0.5) * 10 * 3.1415926 * %spread;
+		%z = (getRandom() - 0.5) * 10 * 3.1415926 * %spread;
+		%mat = MatrixCreateFromEuler(%x @ " " @ %y @ " " @ %z);
+		%velocity = MatrixMulVector(%mat, %velocity);
+
+		%p = new Projectile()
+		{
+			dataBlock = %projectile;
+			initialVelocity = %velocity;
+			initialPosition = %pos;
+			sourceObject = %srcObj;
+			sourceSlot = %srcSlot;
+			sourceInv = %srcObj.currTool;
+			client = %srcCli;
+		};
+		MissionCleanup.add(%p);
+
+		%shells = %shells TAB %p;
+	}
+
+	return removeField(%shells, 0);
+}
+
+function Projectile::sourceHack(%proj, %src, %cl)
+{
+	%proj.sourceClient = %cl;
+	%proj.client = %cl;
+	%proj.sourceObject = %src;
+}
+
+if($Version != 21)
+{
+	eval("function AIPlayer::applyBodyParts() {}");
+	eval("function AIPlayer::applyBodyColors() {}");
+	eval("function AIPlayer::onDeath() {}");
 }

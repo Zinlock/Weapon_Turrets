@@ -243,6 +243,35 @@ datablock ItemData(Turret_TribalMortarItem : Turret_TribalPulseItem)
 	turretDesc = "Slow, but strong<br>Can't target flying vehicles<br>Deals bonus damage to vehicles";
 };
 
+datablock ItemData(Turret_TribalMortarBoxItem)
+{
+	category = "TurretBarrel";
+	className = "TurretBarrel";
+
+	shapeFile = "./dts/turretbox.dts";
+	rotate = false;
+	mass = 1;
+	density = 0.2;
+	elasticity = 0.2;
+	friction = 0.6;
+	emap = true;
+
+	uiName = "TB: Mortar Kit";
+	iconName = Turret_TribalMortarItem.iconName;
+	doColorShift = true;
+	colorShiftColor = Turret_BoxPlaceImage.colorShiftColor;
+
+	image = Turret_BoxPlaceImage;
+	canDrop = true;
+
+	isTurretBox = true;
+	turretImage = Turret_TribalMortarItem.turretImage;
+	turretData = Turret_TribalDeployableStand;
+	turretUseHead = true;
+	turretTitle = "Mortar Turret";
+	turretDesc = Turret_TribalMortarItem.turretDesc;
+};
+
 datablock ShapeBaseImageData(Turret_TribalMortarImage : Turret_TribalPulseImage)
 {
 	shapeFile = "./dts/baseturret_mortar.dts";

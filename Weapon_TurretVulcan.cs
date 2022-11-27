@@ -125,6 +125,35 @@ datablock ItemData(Turret_TribalVulcanItem : Turret_TribalPulseItem)
 	turretDesc = "Fast, but weak<br>Can't target flying vehicles<br>Deals bonus damage to players";
 };
 
+datablock ItemData(Turret_TribalVulcanBoxItem)
+{
+	category = "TurretBarrel";
+	className = "TurretBarrel";
+
+	shapeFile = "./dts/turretbox.dts";
+	rotate = false;
+	mass = 1;
+	density = 0.2;
+	elasticity = 0.2;
+	friction = 0.6;
+	emap = true;
+
+	uiName = "TB: Vulcan Kit";
+	iconName = Turret_TribalVulcanItem.iconName;
+	doColorShift = true;
+	colorShiftColor = Turret_BoxPlaceImage.colorShiftColor;
+
+	image = Turret_BoxPlaceImage;
+	canDrop = true;
+
+	isTurretBox = true;
+	turretImage = Turret_TribalVulcanItem.turretImage;
+	turretData = Turret_TribalDeployableStand;
+	turretUseHead = true;
+	turretTitle = "Vulcan Turret";
+	turretDesc = Turret_TribalVulcanItem.turretDesc;
+};
+
 datablock ShapeBaseImageData(Turret_TribalVulcanImage : Turret_TribalPulseImage)
 {
 	shapeFile = "./dts/baseturret_vulcan.dts";

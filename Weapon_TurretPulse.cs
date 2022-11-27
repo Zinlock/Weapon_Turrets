@@ -212,6 +212,35 @@ datablock ItemData(Turret_TribalPulseItem)
 	turretDesc = "Fast, but weak<br>Can't target grounded players or vehicles<br>Deals bonus damage to flying vehicles";
 };
 
+datablock ItemData(Turret_TribalPulseBoxItem)
+{
+	category = "TurretBarrel";
+	className = "TurretBarrel";
+
+	shapeFile = "./dts/turretbox.dts";
+	rotate = false;
+	mass = 1;
+	density = 0.2;
+	elasticity = 0.2;
+	friction = 0.6;
+	emap = true;
+
+	uiName = "TB: Anti Air Kit";
+	iconName = Turret_TribalPulseItem.iconName;
+	doColorShift = true;
+	colorShiftColor = Turret_BoxPlaceImage.colorShiftColor;
+
+	image = Turret_BoxPlaceImage;
+	canDrop = true;
+
+	isTurretBox = true;
+	turretImage = Turret_TribalPulseItem.turretImage;
+	turretData = Turret_TribalDeployableStand;
+	turretUseHead = true;
+	turretTitle = "Anti Air Turret";
+	turretDesc = Turret_TribalPulseItem.turretDesc;
+};
+
 datablock ShapeBaseImageData(Turret_TribalPulseImage)
 {
 	mountPoint = 0;
@@ -282,21 +311,27 @@ datablock ShapeBaseImageData(Turret_TribalPulseImage)
 
 function Turret_TribalPulseImage::onFire1(%img, %obj, %slot)
 {
-	%src = %obj.sourceObject;
-	%cli = %obj.sourceClient;
-
-	if(!isObject(%cli))
-	{
-		%src = %obj.turretBase;
-		%cli = %obj.turretBase;
-	}
+	%src2 = %obj.sourceObject;
+	%cli2 = %obj.sourceClient;
+	
+	%src = %obj.turretBase;
+	%cli = %obj.turretBase;
 
 	%vec = %obj.getMuzzleVector(%slot);
 
 	if(mRadToDeg(mAcos(vectorDot(%vec, %obj.aimVector))) < %img.projectileTolerance)
 		%vec = %obj.aimVector;
 
-	ProjectileFire(%img.projectile, %obj.getSlotTransform(0), %vec, %img.projectileSpread, %img.projectileCount, %slot, %src, %cli, %img.projectileSpeed);
+	%shells = ProjectileFire(%img.projectile, %obj.getSlotTransform(0), %vec, %img.projectileSpread, %img.projectileCount, %slot, %src, %cli, %img.projectileSpeed);
+
+	if(isObject(%cli2))
+	{
+		for(%i = 0; %i < getWordCount(%shells); %i++)
+		{
+			%shell = getWord(%shells, %i);
+			%shell.schedule(0, sourceHack, %src2, %cli2);
+		}
+	}
 
 	if(isObject(%img.fireSound))
 	{

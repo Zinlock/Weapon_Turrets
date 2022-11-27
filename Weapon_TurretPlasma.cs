@@ -250,6 +250,35 @@ datablock ItemData(Turret_TribalPlasmaItem : Turret_TribalPulseItem)
 	turretDesc = "Slow, but strong<br>Deals bonus damage to vehicles";
 };
 
+datablock ItemData(Turret_TribalPlasmaBoxItem)
+{
+	category = "TurretBarrel";
+	className = "TurretBarrel";
+
+	shapeFile = "./dts/turretbox.dts";
+	rotate = false;
+	mass = 1;
+	density = 0.2;
+	elasticity = 0.2;
+	friction = 0.6;
+	emap = true;
+
+	uiName = "TB: Plasma Kit";
+	iconName = Turret_TribalPlasmaItem.iconName;
+	doColorShift = true;
+	colorShiftColor = Turret_BoxPlaceImage.colorShiftColor;
+
+	image = Turret_BoxPlaceImage;
+	canDrop = true;
+
+	isTurretBox = true;
+	turretImage = Turret_TribalPlasmaItem.turretImage;
+	turretData = Turret_TribalDeployableStand;
+	turretUseHead = true;
+	turretTitle = "Plasma Turret";
+	turretDesc = Turret_TribalPlasmaItem.turretDesc;
+};
+
 datablock ShapeBaseImageData(Turret_TribalPlasmaImage : Turret_TribalPulseImage)
 {
 	shapeFile = "./dts/baseturret_plasma.dts";

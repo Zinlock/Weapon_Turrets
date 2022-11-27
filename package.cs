@@ -1,51 +1,52 @@
-// main.cs:
-// datablocks for turret guns
-// functions for shooting stuff, tracking players etc
-
 $Turret_TargetMask = $TypeMasks::PlayerObjectType | $TypeMasks::VehicleObjectType | $TypeMasks::ItemObjectType | $TypeMasks::ProjectileObjectType;
 $Turret_WallMask = $TypeMasks::fxBrickObjectType | $TypeMasks::VehicleObjectType | $TypeMasks::StaticObjectType | $TypeMasks::InteriorObjectType | $TypeMasks::TerrainObjectType;
 
-
-function ProjectileFire(%db, %pos, %vec, %spd, %amt, %srcSlot, %srcObj, %srcCli, %vel)
-{	
-	%projectile = %db;
-	%spread = %spd / 1000;
-	%shellcount = %amt;
-
-	if(%vel $= "")
-		%vel = %projectile.muzzleVelocity;
-
-	%shells = -1;
-
-	for(%shell=0; %shell<%shellcount; %shell++)
-	{
-		%velocity = VectorScale(%vec, %vel);
-		%x = (getRandom() - 0.5) * 10 * 3.1415926 * %spread;
-		%y = (getRandom() - 0.5) * 10 * 3.1415926 * %spread;
-		%z = (getRandom() - 0.5) * 10 * 3.1415926 * %spread;
-		%mat = MatrixCreateFromEuler(%x @ " " @ %y @ " " @ %z);
-		%velocity = MatrixMulVector(%mat, %velocity);
-
-		%p = new Projectile()
-		{
-			dataBlock = %projectile;
-			initialVelocity = %velocity;
-			initialPosition = %pos;
-			sourceObject = %srcObj;
-			sourceSlot = %srcSlot;
-			sourceInv = %srcObj.currTool;
-			client = %srcCli;
-		};
-		MissionCleanup.add(%p);
-
-		%shells = %shells TAB %p;
-	}
-
-	return removeField(%shells, 0);
-}
-
 package TurretPackMain
 {
+	function MinigameSO::addMember(%mini,%client)
+	{
+		Parent::addMember(%mini,%client);
+
+		if(isObject(%client.deployedTurret))
+			%client.deployedTurret.delete();
+	}
+
+	function MinigameSO::removeMember(%mini,%client)
+	{
+		Parent::removeMember(%mini,%client);
+
+		if(isObject(%client.deployedTurret))
+			%client.deployedTurret.delete();
+	}
+	
+	function MinigameSO::reset(%mini,%client)
+	{
+		Parent::reset(%mini,%client);
+
+		for(%i = 0; %i < %mini.numMembers; %i++)
+		{
+			%cl = %mini.member[%i];
+			if(isObject(%cl.deployedTurret))
+				%cl.deployedTurret.delete();
+		}
+	}
+
+	function GameConnection::onDrop(%cl, %msg)
+	{
+		if(isObject(%cl.deployedTurret))
+			%cl.deployedTurret.delete();
+
+		Parent::onDrop(%cl, %msg);
+	}
+
+	function AIPlayer::Pickup(%pl, %itm, %x)
+	{
+		if(%pl.getDataBlock().isTurretArmor)
+			return;
+		
+		return Parent::Pickup(%pl, %itm, %x);
+	}
+
 	function Armor::onAdd(%db, %pl)
 	{
 		Parent::onAdd(%db, %pl);
@@ -55,14 +56,6 @@ package TurretPackMain
 			if(%db.isTurretHead)
 				%pl.schedule(200, onTurretIdleTick);
 		}
-	}
-
-	function Armor::onDamage(%db, %pl, %dmg)
-	{
-		Parent::onDamage(%db, %pl, %dmg);
-
-		// if(%db.isTurretArmor)
-		// 	%pl.turretDamageCheck();
 	}
 
 	function Armor::onDisabled(%db, %pl, %state)
@@ -106,7 +99,7 @@ package TurretPackMain
 	{
 		if(%db.isTurretArmor)
 		{
-			if(%src == %pl || %src.sourceObject == %pl)
+			if(!%pl.takeSelfDmg && (%src == %pl || %src.sourceObject == %pl || %src.realSource == %pl || (%src.realSource == %pl.turretHead && isObject(%pl.turretHead))))
 				return;
 
 			if(%pos $= "")

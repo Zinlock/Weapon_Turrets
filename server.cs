@@ -15,12 +15,13 @@ function tt(%path)
 exec("Add-Ons/Support_ShapelinesV2/server.cs");
 
 exec("./ballistics.cs");
-exec("./main.cs");
+exec("./package.cs");
 exec("./functions.cs");
 exec("./events.cs");
 exec("./power.cs");
 
 exec("./Turret_Base.cs");
+exec("./Turret_Deployable.cs");
 exec("./Turret_Barrels.cs");
 exec("./Weapon_TurretPulse.cs");
 exec("./Weapon_TurretPlasma.cs");

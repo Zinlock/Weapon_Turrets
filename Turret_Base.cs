@@ -160,13 +160,21 @@ function Turret_TribalBaseStand::onAdd(%db, %obj)
 		{
 			datablock = %db.turretHeadData;
 			position = %obj.getPosition();
+
 			turretBase = %obj;
+
 			sourceClient = %obj.sourceClient;
 			sourceObject = %obj.sourceObject;
+
 			triggerTeam = false;
 			triggerHeal = false;
+
+			turretImage = %obj.turretImage;
+
 			isTribalBaseTurret = true;
 		};
+
+		MissionCleanup.add(%obj.turretHead);
 
 		%obj.isTribalBaseTurret = true;
 
@@ -206,7 +214,9 @@ function Turret_TribalBaseArms::onAdd(%db, %obj)
 {
 	Parent::onAdd(%db, %obj);
 
-	if(isObject(%db.TurretDefaultImage))
+	if(isObject(%obj.turretImage))
+		%obj.mountImage(%obj.turretImage, 0);
+	else if(isObject(%db.TurretDefaultImage))
 		%obj.mountImage(%db.TurretDefaultImage, 0);
 		
 	%obj.idle = %obj.schedule(2000, tbIdleReset);
@@ -273,15 +283,20 @@ function Turret_TribalBaseArms::turretOnTargetTick(%db, %pl, %target)
 	%pl.setAimPointHack(%pos);
 }
 
-function AIPlayer::tbIdleReset(%pl)
+function Turret_TribalBaseArms::tbIdleReset(%db, %pl)
 {
-	if(!%pl.isPowered)
-		return;
-
 	%pl.stopAudio(1);
 	%pl.playThread(0, idle);
 	%pl.setAimPointHack(vectorAdd(%pl.getEyePoint(), vectorScale(%pl.turretBase.getForwardVector(), 10)));
 	%pl.tbi1 = %pl.schedule(650, setTransform, "0 0 0 0 0 1 0");
 	%pl.turretBase.playThread(1, close);
 	%pl.tbi2 = %pl.turretBase.schedule(650, playThread, 0, rootClose);
+}
+
+function AIPlayer::tbIdleReset(%pl)
+{
+	if(!%pl.isPowered)
+		return;
+	
+	%pl.getDataBlock().tbIdleReset(%pl);
 }
