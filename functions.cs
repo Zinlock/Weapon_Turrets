@@ -505,11 +505,21 @@ function AIPlayer::onTurretIdleTick(%pl)
 		else if(!%pl.isPowered)
 		{
 			%pl.isPowered = true;
+			%pl.wasJammed = false;
 			%db.turretOnPowerRestored(%pl);
 			%skip = true;
 		}
 	}
-	else %pl.isPowered = true;
+	else
+	{
+		%pl.isPowered = true;
+		if(%pl.wasJammed)
+		{
+			%db.turretOnPowerRestored(%pl);
+			%pl.wasJammed = false;
+			%skip = true;
+		}
+	}
 
 	if(%pl.isPowered && !%skip)
 	{
@@ -587,6 +597,9 @@ function AIPlayer::turretKill(%obj)
 
 function AIPlayer::turretJam(%obj, %time)
 {
+	if(%obj.getDataBlock().neverJam)
+		return;
+
 	if(isObject(%obj.turretHead))
 		return %obj.turretHead.turretJam(%time);
 
@@ -596,6 +609,7 @@ function AIPlayer::turretJam(%obj, %time)
 	cancel(%obj.jamReset);
 
 	%obj.isJammed = true;
+	%obj.wasJammed = true;
 	%obj.jamReset = %obj.schedule(%time, turretUnJam);
 }
 
@@ -603,6 +617,7 @@ function AIPlayer::turretUnJam(%obj)
 {
 	cancel(%obj.jamReset);
 	%obj.isJammed = false;
+	%obj.wasJammed = true;
 }
 
 // support functions //
