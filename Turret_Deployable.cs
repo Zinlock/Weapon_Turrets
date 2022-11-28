@@ -2,7 +2,16 @@ datablock PlayerData(Turret_TribalDeployableStand : Turret_TribalBaseStand) // r
 {
 	TurretHeadData = Turret_TribalDeployableArms;
 
-	energyShield = 0;
+	idleSound = Turret_BaseIdleSound;
+	
+	rechargeRate = 15 / 31.25;
+	maxEnergy = 100;
+	energyShield = 0.65;
+	energyShape = Turret_EnergyShieldShape;
+	energyScale = 1.5;
+	energyDelay = 2;
+	energySound = Turret_ShieldDamagedSound;
+	energyBreakSound = Turret_ShieldDestroyedSound;
 
 	disabledLevel = 1.0;
 
@@ -88,8 +97,6 @@ function Turret_TribalDeployableArms::onAdd(%db, %obj)
 
 function Turret_TribalDeployableArms::turretCanMount(%db, %pl, %img)
 {
-	// return Turret_TribalBaseArms::turretCanMount(%db, %pl, %img);
-
 	return false;
 }
 
@@ -119,5 +126,6 @@ function Turret_TribalDeployableArms::tbIdleReset(%db, %pl)
 	%pl.setAimPointHack(vectorAdd(%pl.getEyePoint(), vectorScale(%pl.turretBase.getForwardVector(), 10)));
 	%pl.tbi1 = %pl.schedule(650, setTransform, "0 0 0 0 0 1 0");
 	%pl.turretBase.playThread(1, close);
+	%pl.turretBase.playAudio(3, %pl.turretBase.getDataBlock().idleSound);
 	%pl.tbi2 = %pl.turretBase.schedule(650, playThread, 0, rootClose);
 }

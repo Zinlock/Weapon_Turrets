@@ -29,6 +29,8 @@ datablock PlayerData(Turret_TribalBaseGenerator : PlayerStandardArmor)
 	destroyedExplosion = Turret_TribalDestroyedProjectile;
 	destroyedSound = Turret_GeneratorDestroyedSound;
 
+	idleSound = Turret_GeneratorIdleSound;
+
 	isPowerGenerator = true;
 	generatorPower = 2;
 
@@ -77,8 +79,24 @@ datablock PlayerData(Turret_TribalBaseGenerator : PlayerStandardArmor)
 	UIName = "Tribal Base Generator";
 };
 
+function Turret_TribalBaseGenerator::turretOnPowerLost(%db, %obj)
+{
+	%obj.stopAudio(3);
+	
+	Parent::turretOnPowerLost(%db, %obj);
+}
+
+function Turret_TribalBaseGenerator::turretOnPowerRestored(%db, %obj)
+{
+	%obj.playAudio(3, %db.idleSound);
+	
+	Parent::turretOnPowerRestored(%db, %obj);
+}
+
 function Turret_TribalBaseGenerator::turretOnDisabled(%db, %obj, %src)
 {
+	%obj.stopAudio(3);
+
 	Parent::turretOnDisabled(%db, %obj, %src);
 }
 
@@ -98,6 +116,8 @@ function Turret_TribalBaseGenerator::turretOnRecovered(%db, %obj, %src)
 
 function Turret_TribalBaseGenerator::turretOnRepaired(%db, %obj, %src)
 {
+	%obj.playAudio(3, %db.idleSound);
+
 	Parent::turretOnRepaired(%db, %obj, %src);
 }
 
@@ -109,7 +129,7 @@ function Turret_TribalBaseGenerator::onAdd(%db, %obj)
 		%obj.setNodeColor("ALL", "1 1 1 1");
 		%obj.isBot = true;
 		
-		%obj.playAudio(3, Turret_GeneratorIdleSound);
+		%obj.playAudio(3, %db.idleSound);
 	}
 
 	Parent::onAdd(%db, %obj);

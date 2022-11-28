@@ -556,6 +556,9 @@ function AIPlayer::turretDamageCheck(%obj, %src)
 	{
 		if(!%obj.isDestroyed)
 		{
+			if(!%obj.isDisabled)
+				%db.turretOnDisabled(%obj, %src);
+
 			%obj.isDisabled = true;
 			%obj.isDestroyed = true;
 			%db.turretOnDestroyed(%obj, %src);
@@ -580,6 +583,9 @@ function AIPlayer::turretDamageCheck(%obj, %src)
 	{
 		if(%obj.isDestroyed || %obj.isDisabled)
 		{
+			if(%obj.isDestroyed)
+				%db.turretOnRecovered(%obj, %src);
+				
 			%obj.isDestroyed = false;
 			%obj.isDisabled = false;
 			%db.turretOnRepaired(%obj, %src);

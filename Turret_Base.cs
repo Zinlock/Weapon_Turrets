@@ -49,6 +49,8 @@ datablock PlayerData(Turret_TribalBaseStand : PlayerStandardArmor) // root rootC
 	energySound = Turret_ShieldDamagedSound;
 	energyBreakSound = Turret_ShieldDestroyedSound;
 
+	idleSound = Turret_BaseIdleSound;
+
 	thirdPersonOnly = 1;
 	
 	rideable = true;
@@ -103,6 +105,8 @@ datablock PlayerData(Turret_TribalBaseArms : Turret_TribalBaseStand) // root idl
 function Turret_TribalBaseStand::turretOnDisabled(%db, %obj, %src)
 {
 	Parent::turretOnDisabled(%db, %obj, %src);
+
+	%obj.stopAudio(3);
 	
 	cancel(%obj.turretHead.fire);
 	cancel(%obj.turretHead.idle);	
@@ -161,6 +165,8 @@ function Turret_TribalBaseStand::turretOnRepaired(%db, %obj, %src)
 
 function Turret_TribalBaseArms::turretOnPowerLost(%db, %obj)
 {
+	%obj.turretBase.stopAudio(3);
+
 	Parent::turretOnPowerLost(%db, %obj);
 }
 
@@ -210,7 +216,7 @@ function Turret_TribalBaseStand::onAdd(%db, %obj)
 
 		%obj.isBot = true;
 
-		%obj.playAudio(3, Turret_BaseIdleSound);
+		%obj.playAudio(3, %db.idleSound);
 	}
 
 	Parent::onAdd(%db, %obj);
@@ -314,6 +320,7 @@ function Turret_TribalBaseArms::tbIdleReset(%db, %pl)
 	%pl.playThread(0, idle);
 	%pl.setAimPointHack(vectorAdd(%pl.getEyePoint(), vectorScale(%pl.turretBase.getForwardVector(), 10)));
 	%pl.tbi1 = %pl.schedule(650, setTransform, "0 0 0 0 0 1 0");
+	%pl.turretBase.playAudio(3, %pl.turretBase.getDataBlock().idleSound);
 	%pl.turretBase.playThread(1, close);
 	%pl.tbi2 = %pl.turretBase.schedule(650, playThread, 0, rootClose);
 }
