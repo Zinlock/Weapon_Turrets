@@ -108,6 +108,8 @@ function Turret_TribalBaseGenerator::onAdd(%db, %obj)
 		%obj.isTribalBaseGenerator = true;
 		%obj.setNodeColor("ALL", "1 1 1 1");
 		%obj.isBot = true;
+		
+		%obj.playAudio(3, Turret_GeneratorIdleSound);
 	}
 
 	Parent::onAdd(%db, %obj);

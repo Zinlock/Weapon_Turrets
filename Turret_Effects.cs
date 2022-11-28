@@ -19,6 +19,20 @@ datablock AudioProfile(Turret_ShieldRecoveredSound)
 	preload = true;
 };
 
+datablock AudioProfile(Turret_BaseIdleSound)
+{
+	fileName = "./wav/base_turret_idle.wav";
+	description = AudioClosestLooping3D;
+	preload = true;
+};
+
+datablock AudioProfile(Turret_GeneratorIdleSound)
+{
+	fileName = "./wav/base_generator_idle.wav";
+	description = AudioClosestLooping3D;
+	preload = true;
+};
+
 datablock StaticShapeData(Turret_EnergyShieldShape) { shapeFile = "./dts/energy_shield.dts"; };
 
 datablock ParticleData(Turret_TribalNoPowerParticle)
