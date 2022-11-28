@@ -142,7 +142,7 @@ datablock ParticleData(Turret_TribalDestroyedSmokeParticle)
 	gravityCoefficient	= 0;
 	inheritedVelFactor	= -0.25;
 	constantAcceleration	= 0.0;
-	lifetimeMS		= 1000;
+	lifetimeMS		= 2500;
 	lifetimeVarianceMS	= 0;
 	spinSpeed		= 40.0;
 	spinRandomMin		= -40.0;
@@ -152,9 +152,9 @@ datablock ParticleData(Turret_TribalDestroyedSmokeParticle)
 
 	textureName		= "base/data/particles/cloud";
 
-	colors[0]     = "0 0 0 0.1";
-	colors[1]     = "0 0 0 0.2";
-	colors[2]     = "0 0 0 0.1";
+	colors[0]     = "0 0 0 0.05";
+	colors[1]     = "0 0 0 0.1";
+	colors[2]     = "0 0 0 0.05";
 	colors[3]     = "0 0 0 0.0";
 
 	sizes[0]	= 5.2;
@@ -170,7 +170,7 @@ datablock ParticleData(Turret_TribalDestroyedSmokeParticle)
 
 datablock ParticleEmitterData(Turret_TribalDestroyedSmokeEmitter)
 {
-	ejectionPeriodMS = 2;
+	ejectionPeriodMS = 5;
 	periodVarianceMS = 0;
 	ejectionVelocity = 9;
 	velocityVariance = 8.0;
@@ -188,10 +188,6 @@ datablock ExplosionData(Turret_TribalDestroyedExplosion)
 	explosionShape = "Add-Ons/Weapon_Rocket_Launcher/explosionSphere1.dts";
 
 	lifeTimeMS = 350;
-
-	// particleEmitter = Turret_TribalDestroyedSmokeEmitter;
-	// particleDensity = 100;
-	// particleRadius = 0.0;
 
 	emitter[0] = Turret_TribalDestroyedSmokeEmitter;
 
