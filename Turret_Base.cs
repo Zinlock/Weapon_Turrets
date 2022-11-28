@@ -46,6 +46,8 @@ datablock PlayerData(Turret_TribalBaseStand : PlayerStandardArmor) // root rootC
 	energyShape = Turret_EnergyShieldShape;
 	energyScale = 1.5;
 	energyDelay = 2;
+	energySound = Turret_ShieldDamagedSound;
+	energyBreakSound = Turret_ShieldDestroyedSound;
 
 	thirdPersonOnly = 1;
 	

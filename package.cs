@@ -3,6 +3,19 @@ $Turret_WallMask = $TypeMasks::fxBrickObjectType | $TypeMasks::VehicleObjectType
 
 package TurretPackMain
 {
+	function ae_calculateDamagePosition(%pl, %pos)
+	{
+		if(isObject(%pl))
+		{
+			%db = %pl.getDataBlock();
+
+			if(%db.isTurretArmor)
+				return "upbody";
+		}
+
+		return Parent::ae_calculateDamagePosition(%pl, %pos);
+	}
+
 	function MinigameSO::addMember(%mini,%client)
 	{
 		Parent::addMember(%mini,%client);
@@ -141,15 +154,20 @@ package TurretPackMain
 
 				if(%ndm > %erg)
 					%ndm = %erg;
+				
+				%nrg = %erg - %ndm;
+
+				if(%nrg <= 0 && %erg > 0)
+					%db.turretOnShieldBreak(%pl, %src);
 
 				%dmg = %dmg - %ndm;
-				%pl.setEnergyLevel(%erg - %ndm);
-
-				if(%erg > %pl.getEnergyLevel() && %erg > (%db.maxEnergy * 0.1))
-					%db.turretOnShieldBreak(%pl, %src);
+				%pl.setEnergyLevel(%nrg);
 				
-				if(%pl.getEnergyLevel() > 5)
+				if(%pl.getEnergyLevel() > 0)
 				{
+					if(isObject(%db.energySound))
+						serverPlay3D(%db.energySound, %pl.getHackPosition());
+
 					if(isObject(%db.energyShape))
 					{
 						%shape = %pl.lastEnergyShape;
