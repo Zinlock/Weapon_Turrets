@@ -210,6 +210,9 @@ function PowerGroup::getPower(%grp)
 
 function PowerGroup::onRemove(%grp)
 {
-	%grp.generators.delete();
-	%grp.members.delete();
+	if(isObject(%grp.generators))
+		%grp.generators.delete();
+	
+	if(isObject(%grp.members))
+		%grp.members.delete();
 }
