@@ -4,11 +4,6 @@ datablock PlayerData(Turret_TribalDeployableStand : Turret_TribalBaseStand) // r
 
 	energyShield = 0;
 
-	destroyedEmitter[0] = Turret_TribalDisabledEmitter;
-	destroyedEmitter[1] = Turret_TribalNoPowerEmitter2;
-	destroyedExplosion = Turret_TribalDestroyedProjectile;
-	destroyedSound = Turret_TribalDestroyedSound;
-
 	disabledLevel = 1.0;
 
 	shapeFile = "./dts/baseturret_light.dts";

@@ -328,7 +328,7 @@ function Armor::turretOnRepaired(%db, %pl, %src)
 		if(isObject(%o = %pl.disabledParticle[%i]))
 			%o.delete();
 
-		if(!%head.isPowered)
+		if(!%head.isPowered || %head.isJammed)
 		{
 			if(isObject(%db.powerLostEmitter[%i]))
 			{
@@ -463,9 +463,9 @@ function AIPlayer::onTurretTargetTick(%pl, %target)
 	cancel(%pl.turretIdle);
 	cancel(%pl.turretTarget);
 
-	if(isObject(%grp = %pl.powerGroup))
+	if(%pl.isJammed || isObject(%grp = %pl.powerGroup))
 	{
-		if(!%grp.getPower() && %pl.isPowered)
+		if((%pl.isJammed || (!%grp.isGenerator(%pl) && !%grp.getPower())) && %pl.isPowered)
 		{
 			%pl.isPowered = false;
 			%db.turretOnPowerLost(%pl);
@@ -490,10 +490,10 @@ function AIPlayer::onTurretIdleTick(%pl)
 	cancel(%pl.turretIdle);
 
 	%skip = false;
-	
-	if(isObject(%grp = %pl.powerGroup))
+
+	if(%pl.isJammed || isObject(%grp = %pl.powerGroup))
 	{
-		if(!%grp.getPower())
+		if(%pl.isJammed || (!%grp.isGenerator(%pl) && !%grp.getPower()))
 		{
 			if(%pl.isPowered)
 			{
@@ -583,6 +583,26 @@ function AIPlayer::turretKill(%obj)
 	%obj.kill();
 	%obj.takeSelfDmg = false;
 	%obj.turretDamageCheck(0);
+}
+
+function AIPlayer::turretJam(%obj, %time)
+{
+	if(isObject(%obj.turretHead))
+		return %obj.turretHead.turretJam(%time);
+
+	if(%time < getTimeRemaining(%obj.jamReset))
+		return;
+	
+	cancel(%obj.jamReset);
+
+	%obj.isJammed = true;
+	%obj.jamReset = %obj.schedule(%time, turretUnJam);
+}
+
+function AIPlayer::turretUnJam(%obj)
+{
+	cancel(%obj.jamReset);
+	%obj.isJammed = false;
 }
 
 // support functions //

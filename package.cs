@@ -128,6 +128,18 @@ package TurretPackMain
 		Parent::RBloodSimulate(%pl, %p, %v, %d, %s, %k);
 	}
 
+	function AIPlayer::zap(%pl)
+	{
+		%db = %pl.getDataBlock();
+		if(%db.isTurretArmor)
+		{
+			%time = %pl.zapTicks * 250;
+			%pl.turretJam(%time);
+		}
+		else
+			Parent::zap(%pl);
+	}
+
 	function Armor::Damage(%db, %pl, %src, %pos, %dmg, %type)
 	{
 		if(%db.isTurretArmor)

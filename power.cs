@@ -196,7 +196,7 @@ function PowerGroup::getPower(%grp)
 		%gen = %grp.getGenerator(%i);
 		%db = %gen.getDataBlock();
 
-		if(!%gen.isDisabled && !%gen.isDestroyed)
+		if(!%gen.isDisabled && !%gen.isDestroyed && !%gen.isJammed)
 		{
 			if(%db.generatorPower > 0)
 				%power += %db.generatorPower;
