@@ -4,8 +4,8 @@ datablock PlayerData(Turret_TribalDeployableStand : Turret_TribalBaseStand) // r
 
 	idleSound = Turret_BaseIdleSound;
 	
-	rechargeRate = 15 / 31.25;
-	maxEnergy = 100;
+	rechargeRate = 12.5 / 31.25;
+	maxEnergy = 75;
 	energyShield = 0.65;
 	energyShape = Turret_EnergyShieldShape;
 	energyScale = 1.5;
