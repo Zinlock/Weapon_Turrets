@@ -87,10 +87,7 @@ function Turret_BoxPlaceImage::onMount(%this, %obj, %slot)
 function Turret_BoxPlaceImage::onReady(%this, %obj, %slot)
 {
 	if(!%obj.tool[%obj.currTool].isTurretBox)
-	{
-		%obj.unmountImage(%slot);
 		return;
-	}
 	
 	if(isObject(%obj.client))
 		%obj.client.centerPrint("<color:FD9322><font:impact:24>" @ %obj.tool[%obj.currTool].turretTitle @ "<br><color:FFFFFF><font:arial:16>" @ %obj.tool[%obj.currTool].turretDesc @ "<br>Click to deploy", 1);
@@ -99,10 +96,7 @@ function Turret_BoxPlaceImage::onReady(%this, %obj, %slot)
 function Turret_BoxPlaceImage::onFire(%this, %obj, %slot)
 {
 	if(!%obj.tool[%obj.currTool].isTurretBox || !isObject(%cl = %obj.client))
-	{
-		%obj.unmountImage(%slot);
 		return;
-	}
 
 	%vec = %obj.getForwardVector();
 	%end = vectorAdd(%obj.getEyePoint(), vectorScale(%vec, 4));
@@ -231,10 +225,7 @@ function Turret_BarrelPlaceImage::onAltRelease() {}
 function Turret_BarrelPlaceImage::onReady(%this, %obj, %slot)
 {
 	if(!%obj.tool[%obj.currTool].isTurretBarrel)
-	{
-		%obj.unmountImage(%slot);
 		return;
-	}
 	
 	if(isObject(%obj.client))
 		%obj.client.centerPrint("<color:FD9322><font:impact:24>" @ %obj.tool[%obj.currTool].turretTitle @ "<br><color:FFFFFF><font:arial:16>" @ %obj.tool[%obj.currTool].turretDesc @ "<br>Click on a turret to mount", 1);
@@ -243,10 +234,7 @@ function Turret_BarrelPlaceImage::onReady(%this, %obj, %slot)
 function Turret_BarrelPlaceImage::onFire(%this, %obj, %slot)
 {
 	if(!%obj.tool[%obj.currTool].isTurretBarrel)
-	{
-		%obj.unmountImage(%slot);
 		return;
-	}
 	
 	%ray = containerRayCast(%obj.getEyePoint(), vectorAdd(%obj.getEyePoint(), vectorScale(%obj.getLookVector(), 5)), $TypeMasks::PlayerObjectType | $Turret_WallMask, %obj);
 	if(!isObject(%ray) || %ray.ignoreBarrelMount || %ray.getClassName() !$= "AIPlayer" || !isObject(%head = %ray.turretHead) || %ray.isDestroyed || isObject(%head.target))
