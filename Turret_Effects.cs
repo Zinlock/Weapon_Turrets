@@ -35,6 +35,50 @@ datablock AudioProfile(Turret_GeneratorIdleSound)
 
 datablock StaticShapeData(Turret_EnergyShieldShape) { shapeFile = "./dts/energy_shield.dts"; };
 
+datablock ExplosionData(Turret_DeployCogExplosion)
+{
+	debris = mine_scrapCogDebris;
+	debrisNum = 3;
+	debrisNumVariance = 3;
+	debrisPhiMin = 0;
+	debrisPhiMax = 360;
+	debrisThetaMin = 0;
+	debrisThetaMax = 45;
+	debrisVelocity = 4;
+	debrisVelocityVariance = 4;
+};
+
+datablock ExplosionData(Turret_DeployNutExplosion : Turret_DeployCogExplosion)
+{
+	debris = mine_scrapNutDebris;
+	debrisNum = 6;
+	debrisVelocity = 4;
+};
+
+datablock ExplosionData(Turret_DeployScrewExplosion : Turret_DeployCogExplosion)
+{
+	debris = mine_scrapScrewDebris;
+	debrisNum = 6;
+	debrisVelocity = 4;
+
+	subExplosion[0] = Turret_DeployCogExplosion;
+};
+
+datablock ExplosionData(Turret_DeployExplosion)
+{
+	lifeTimeMS = 150;
+	explosionScale = "1 1 1";
+
+	subExplosion[0] = Turret_DeployScrewExplosion;
+	subExplosion[1] = Turret_DeployNutExplosion;
+
+	impulseRadius = 0;
+	impulseForce = 0;
+
+	damageRadius = 0;
+	radiusDamage = 0;
+};
+
 datablock ParticleData(Turret_TribalNoPowerParticle)
 {
 	dragCoefficient			= 0;
@@ -233,6 +277,23 @@ datablock ProjectileData(Turret_TribalDestroyedProjectile)
 	projectileShapeName = "base/data/shapes/empty.dts";
 	directDamage        = 0;
 	explosion           = Turret_TribalDestroyedExplosion;
+
+	explodeOnDeath = true;
+	explodeOnPlayerImpact = true;
+
+	muzzleVelocity      = 0;
+	velInheritFactor    = 0;
+
+	armingDelay         = 0;
+	lifetime            = 32;
+	fadeDelay           = 32;
+};
+
+datablock ProjectileData(Turret_TribalDeployedProjectile)
+{
+	projectileShapeName = "base/data/shapes/empty.dts";
+	directDamage        = 0;
+	explosion           = Turret_DeployExplosion;
 
 	explodeOnDeath = true;
 	explodeOnPlayerImpact = true;

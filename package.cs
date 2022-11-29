@@ -21,7 +21,7 @@ package TurretPackMain
 		Parent::addMember(%mini,%client);
 
 		if(isObject(%client.deployedTurret))
-			%client.deployedTurret.delete();
+			%client.deployedTurret.turretKill();
 	}
 
 	function MinigameSO::removeMember(%mini,%client)
@@ -29,7 +29,7 @@ package TurretPackMain
 		Parent::removeMember(%mini,%client);
 
 		if(isObject(%client.deployedTurret))
-			%client.deployedTurret.delete();
+			%client.deployedTurret.turretKill();
 	}
 	
 	function MinigameSO::reset(%mini,%client)
@@ -40,14 +40,14 @@ package TurretPackMain
 		{
 			%cl = %mini.member[%i];
 			if(isObject(%cl.deployedTurret))
-				%cl.deployedTurret.delete();
+				%cl.deployedTurret.turretKill();
 		}
 	}
 
 	function GameConnection::onDrop(%cl, %msg)
 	{
 		if(isObject(%cl.deployedTurret))
-			%cl.deployedTurret.delete();
+			%cl.deployedTurret.turretKill();
 
 		Parent::onDrop(%cl, %msg);
 	}

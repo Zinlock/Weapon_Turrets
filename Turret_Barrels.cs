@@ -5,34 +5,12 @@ datablock AudioProfile(Turret_TribalBarrelMountSound)
 	preload = true;
 };
 
-// datablock ItemData(Turret_TribalPulseItem)
-// {
-// 	category = "TurretBarrel";
-// 	className = "TurretBarrel";
-
-// 	shapeFile = "./dts/baseturret_pulse.dts";
-// 	rotate = false;
-// 	mass = 1;
-// 	density = 0.2;
-// 	elasticity = 0.2;
-// 	friction = 0.6;
-// 	emap = true;
-
-// 	uiName = "TB: Anti Air";
-// 	iconName = "./ico/pulse";
-// 	doColorShift = true;
-// 	colorShiftColor = "0.9 0.9 0.9 1";
-
-// 	image = Turret_BarrelPlaceImage;
-// 	canDrop = true;
-
-// 	isTurretBarrel = true;
-// 	turretImage = Turret_TribalPulseImage;
-// 	turretTitle = "Anti Air Barrel";
-// 	turretDesc = "Fast, but weak<br>Can't target grounded players or vehicles<br>Deals bonus damage to flying vehicles";
-
-// 	isTribalBaseBarrel = true;
-// };
+datablock AudioProfile(Turret_TribalDeploySound)
+{
+	fileName = "./wav/turret_deploy.wav";
+	description = AudioClose3D;
+	preload = true;
+};
 
 datablock ShapeBaseImageData(Turret_BoxPlaceImage)
 {
@@ -68,6 +46,36 @@ datablock ShapeBaseImageData(Turret_BoxPlaceImage)
 	stateTransitionOnTriggerUp[2] = "ready";
 };
 
+datablock ItemData(Turret_BoxEffectItem)
+{
+	category = "TurretBarrel";
+	className = "TurretBarrel";
+
+	shapeFile = "./dts/turretbox.dts";
+	rotate = false;
+	mass = 1;
+	density = 0.2;
+	elasticity = 0.2;
+	friction = 0.6;
+	emap = true;
+
+	uiName = "";
+	iconName = "";
+	doColorShift = true;
+	colorShiftColor = Turret_BoxPlaceImage.colorShiftColor;
+
+	image = "";
+	canDrop = true;
+};
+
+function Turret_BoxEffectItem::onAdd(%db, %itm)
+{
+	Parent::onAdd(%db, %itm);
+
+	%itm.playThread(0, use);
+	%itm.canPickup = false;
+}
+
 function Turret_BoxPlaceImage::onAltFire() {}
 function Turret_BoxPlaceImage::onAltRelease() {}
 
@@ -96,20 +104,31 @@ function Turret_BoxPlaceImage::onFire(%this, %obj, %slot)
 		return;
 	}
 
-	if(isObject(%cl.deployedTurret) && %cl.deployedTurret.getDamagePercent() < 1.0)
-		%cl.deployedTurret.turretKill();
-	
-	%end = vectorAdd(%obj.getEyePoint(), vectorScale(%obj.getLookVector(), 5));
+	%vec = %obj.getForwardVector();
+	%end = vectorAdd(%obj.getEyePoint(), vectorScale(%vec, 4));
 	%ray = containerRayCast(%obj.getEyePoint(), %end, $Turret_WallMask, %obj);
 
 	if(isObject(%ray))
-		%pos = vectorAdd(posFromRaycast(%ray), normalFromRaycast(%ray));
+		%pos = vectorAdd(posFromRaycast(%ray), vectorScale(normalFromRaycast(%ray), 0.5));
 	else
 		%pos = %end;
 	
+	%end2 = vectorAdd(%pos, vectorSub(%obj.getPosition(), %obj.getEyePoint()));
+	%ray2 = containerRayCast(%pos, %end2, $Turret_WallMask, %obj);
+	
+	if(isObject(%ray2))
+		%pos = vectorAdd(posFromRaycast(%ray2), vectorScale(normalFromRaycast(%ray2), 0.5));
+	else
+		%pos = %end2;
+	
+	if(isObject(%cl.deployedTurret) && %cl.deployedTurret.getDamagePercent() < 1.0)
+		%cl.deployedTurret.turretKill();
+
 	%img = %obj.tool[%obj.currTool].turretImage;
 	%db = %obj.tool[%obj.currTool].turretData;
 	%head = %obj.tool[%obj.currTool].turretUseHead;
+
+	serverPlay3D(Turret_TribalDeploySound, %pos);
 
 	%ai = new AIPlayer(DeployedTurret)
 	{
@@ -141,6 +160,41 @@ function Turret_BoxPlaceImage::onFire(%this, %obj, %slot)
 	messageClient(%cl, 'MsgItemPickup', '', %obj.currTool, 0);
 	%obj.unmountImage(%slot);
 	%obj.playThread(1, root);
+
+	%p = new Projectile()
+	{
+		datablock = Turret_TribalDeployedProjectile;
+		initialPosition = vectorAdd(%obj.getHackPosition(), vectorScale(%vec, 1));
+		initialVelocity = %vec;
+	};
+
+	%p.explode();
+
+	%itm = new Item()
+	{
+		datablock = Turret_BoxEffectItem;
+	};
+
+	%itm.setCollisionTimeout(%obj);
+	%itm.setTransform(vectorAdd(%obj.getHackPosition(), vectorScale(%vec, 1)) SPC getWords(%obj.getTransform(), 3, 6));
+	%itm.setVelocity(vectorScale(%vec, 5));
+
+	%time = 3000;
+
+	%itm.schedule (%time - 1000, "startFade", 1000, 0, 1);
+
+	%color = getWords (%itm.getDataBlock ().colorShiftColor, 0, 2);
+	%itm.schedule (%time - 900, setNodeColor, "ALL", %color SPC 0.9);
+	%itm.schedule (%time - 800, setNodeColor, "ALL", %color SPC 0.8);
+	%itm.schedule (%time - 700, setNodeColor, "ALL", %color SPC 0.7);
+	%itm.schedule (%time - 600, setNodeColor, "ALL", %color SPC 0.6);
+	%itm.schedule (%time - 500, setNodeColor, "ALL", %color SPC 0.5);
+	%itm.schedule (%time - 400, setNodeColor, "ALL", %color SPC 0.4);
+	%itm.schedule (%time - 300, setNodeColor, "ALL", %color SPC 0.3);
+	%itm.schedule (%time - 200, setNodeColor, "ALL", %color SPC 0.2);
+	%itm.schedule (%time - 100, setNodeColor, "ALL", %color SPC 0.1);
+	
+	%itm.schedule (%time, delete);
 }
 
 datablock ShapeBaseImageData(Turret_BarrelPlaceImage)
