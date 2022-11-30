@@ -270,8 +270,9 @@ datablock ShapeBaseImageData(Turret_TribalPulseImage)
 	triggerJetTime = 1000;  // time before target counts as jetting
 	triggerGround = false;  // triggers on grounded vehicles
 	triggerAir = true;  // triggers on flying vehicles
-	triggerTeam = false;
-	triggerHeal = false;
+	triggerCloak = false; // triggers on cloaked objects
+	triggerTeam = false; // triggers on friendlies
+	triggerHeal = false; // triggers on damaged players/vehicles
 	
 	projectile = Turret_TribalPulseProjectile;
 	projectileSpread = 0.25;

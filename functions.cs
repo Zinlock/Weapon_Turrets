@@ -2,6 +2,89 @@ $maxTurretEmitters = 4;
 
 // datablock functions //
 
+function turretIsFriendly(%pl, %target)
+{	
+	if(isObject(%pl.sourceClient))
+	{
+		if(%pl.sourceClient == %target.client)
+			return 1;
+
+		%dm = minigameCanDamage(%pl.sourceClient, %target);
+		if(%dm == 0)
+			return 1;
+		else if(%dm == -1)
+			return -1;
+		
+		%mg = %pl.sourceClient.minigame;
+		if(%mg.isSlayerMinigame && isObject(%pl.sourceClient.slyrTeam))
+		{
+			if(%target.getType() & $TypeMasks::PlayerObjectType)
+				%targ = %target.client;
+			else
+				%targ = %target.getControllingClient();
+			
+			if(isObject(%targ))
+			{
+				%dm = %pl.sourceClient.slyrTeam.isAlliedTeam(%targ.slyrTeam);
+				if(%dm)
+					return 1;
+			}
+			else if(isObject(%target.spawnBrick))
+			{
+				%dm = %pl.sourceClient.slyrTeam.isAlliedTeam(%mg.teams.getTeamFromName(%target.spawnBrick.getControllingTeam()));
+				if(%dm)
+					return 1;
+			}
+		}
+	}
+	else if(isObject(%pl.turretBase.spawnBrick))
+	{
+		%mg = getMinigameFromObject(%pl.turretBase);
+		%mg2 = getMinigameFromObject(%target);
+
+		if(%mg != %mg2 || !isObject(%mg) || !isObject(%mg2))
+			return -1;
+		
+		if(%target.getType() & $TypeMasks::PlayerObjectType)
+			%targ = %target.client;
+		else
+			%targ = %target.getControllingClient();
+		
+		if(!isObject(%targ))
+			return -1;
+		
+		if(%mg.isSlayerMinigame)
+		{
+			%teamA = %mg.teams.getTeamFromName(%pl.turretBase.spawnBrick.getControllingTeam());
+
+			if(isObject(%teamA))
+			{
+				if(isObject(%target.spawnBrick))
+				{
+					%team = %target.spawnBrick.getControllingTeam();
+
+					if(%team != 0)
+						%teamB = %mg.teams.getTeamFromName(%team);
+				}
+				else
+					%teamB = %targ.slyrTeam;
+				
+				%dm = isObject(%teamB) && %teamA.isAlliedTeam(%teamB);
+				if(%dm)
+					return 1;
+			}
+		}
+		else
+		{
+			%dm = minigameCanDamage(%pl.turretBase, %target);
+			if(%dm == 0)
+				return 1;
+		}
+	}
+	
+	return 0;
+}
+
 function Armor::turretCanSee(%db, %pl, %target)
 {
 	%pos = %pl.getHackPosition();
@@ -45,87 +128,16 @@ function Armor::turretCanTrigger(%db, %pl, %target)
 	if(vectorDist(%pl.getHackPosition(), %target.getCenterPos()) > %db.TurretLookRange || !%db.turretCanSee(%pl, %target) || %pl.getDamagePercent() >= 1.0 || %target.getDamagePercent() >= 1.0)
 		return 0;
 	
-	if(isObject(%img = %pl.getMountedImage(0)) && !%img.canTrigger(%pl, 0, %target))
+	%img = %pl.getMountedImage(0);
+	if(!isObject(%img))
+		return 0;
+	
+	%team = turretIsFriendly(%pl, %target);
+	if(%team == -1 || %team == 0 && %img.triggerTeam || %team == 1 && !%img.triggerTeam)
 		return 0;
 
-	%tt = %pl.triggerTeam;
-	
-	if(isObject(%pl.sourceClient))
-	{
-		if(%pl.sourceClient == %target.client)
-			return 0;
-
-		%dm = minigameCanDamage(%pl.sourceClient, %target);
-		if(%dm != 1 && !%tt || %dm != 0 && %tt)
-			return 0;
-		
-		%mg = %pl.sourceClient.minigame;
-		if(%mg.isSlayerMinigame && isObject(%pl.sourceClient.slyrTeam))
-		{
-			if(%target.getType() & $TypeMasks::PlayerObjectType)
-				%targ = %target.client;
-			else
-				%targ = %target.getControllingClient();
-			
-			if(isObject(%targ))
-			{
-				%dm = %pl.sourceClient.slyrTeam.isAlliedTeam(%targ.slyrTeam);
-				if(%dm && !%tt || !%dm && %tt)
-					return 0;
-			}
-			else if(isObject(%target.spawnBrick))
-			{
-				%dm = %pl.sourceClient.slyrTeam.isAlliedTeam(%mg.teams.getTeamFromName(%target.spawnBrick.getControllingTeam()));
-				if(%dm && !%tt || !%dm && %tt)
-					return 0;
-			}
-		}
-	}
-	else if(isObject(%pl.turretBase.spawnBrick))
-	{
-		%mg = getMinigameFromObject(%pl.turretBase);
-		%mg2 = getMinigameFromObject(%target);
-
-		if(%mg != %mg2)
-			return 0;
-		
-		if(%target.getType() & $TypeMasks::PlayerObjectType)
-			%targ = %target.client;
-		else
-			%targ = %target.getControllingClient();
-		
-		if(!isObject(%targ))
-			return 0;
-		
-		if(%mg.isSlayerMinigame)
-		{
-			%teamA = %mg.teams.getTeamFromName(%pl.turretBase.spawnBrick.getControllingTeam());
-
-			if(isObject(%teamA))
-			{
-				if(isObject(%target.spawnBrick))
-				{
-					%team = %target.spawnBrick.getControllingTeam();
-
-					if(%team != 0)
-						%teamB = %mg.teams.getTeamFromName(%team);
-				}
-				else
-					%teamB = %targ.slyrTeam;
-				
-				%dm = isObject(%teamB) && %teamA.isAlliedTeam(%teamB);
-				if(%dm && !%tt || !%dm && %tt)
-					return 0;
-			}
-		}
-		else
-		{
-			%dm = minigameCanDamage(%pl.turretBase, %target);
-			if(%dm != 1 && !%tt || %dm != 0 && %tt)
-				return 0;
-		}
-	}
-	else return 0;
+	if(!%img.canTrigger(%pl, 0, %target))
+		return 0;	
 
 	return 1;
 }

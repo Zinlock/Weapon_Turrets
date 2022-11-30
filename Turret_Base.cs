@@ -195,9 +195,6 @@ function Turret_TribalBaseStand::onAdd(%db, %obj)
 			sourceClient = %obj.sourceClient;
 			sourceObject = %obj.sourceObject;
 
-			triggerTeam = false;
-			triggerHeal = false;
-
 			turretImage = %obj.turretImage;
 
 			isTribalBaseTurret = true;
@@ -263,15 +260,7 @@ function Turret_TribalBaseArms::turretCanMount(%db, %pl, %img)
 
 function Turret_TribalBaseArms::turretCanTrigger(%db, %pl, %target)
 {
-	%r = Parent::turretCanTrigger(%db, %pl, %target);
-
-	if(%r)
-	{
-		if(%pl.triggerHeal)
-			return %target.getDamagePercent() > 0.0;
-	}
-	
-	return %r;
+	return Parent::turretCanTrigger(%db, %pl, %target);
 }
 
 function Turret_TribalBaseArms::turretOnTargetFound(%db, %pl, %target)

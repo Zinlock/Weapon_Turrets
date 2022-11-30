@@ -130,9 +130,6 @@ function Turret_BoxPlaceImage::onFire(%this, %obj, %slot)
 		position = %pos;
 
 		turretImage = %img;
-
-		triggerTeam = %img.triggerTeam;
-		triggerHeal = %img.triggerHeal;
 		
 		sourceObject = %obj;
 		sourceClient = %cl;
@@ -245,8 +242,6 @@ function Turret_BarrelPlaceImage::onFire(%this, %obj, %slot)
 	if(%head.getDataBlock().isTurretHead && %head.getMountedImage(0) != %img.getId() && %head.turretCanMount(%img))
 	{
 		%head.mountImage(%img, 0);
-		%head.triggerTeam = %img.triggerTeam;
-		%head.triggerHeal = %img.triggerHeal;
 
 		%obj.weaponCount--;
 		%obj.tool[%obj.currTool] = 0;
@@ -264,9 +259,12 @@ function TurretBarrel::onAdd(%db, %item)
 
 function TurretImage::canTrigger(%img, %obj, %slot, %target)
 {
-	if(%target.isCloaked || %target.isCloaked())
+	if((%target.isCloaked || %target.isCloaked()) && !%img.triggerCloak)
 		return false;
 	
+	if(%img.triggerHeal && %target.getDamagePercent() <= 0.0)
+		return false;
+
 	if(vectorDist(%obj.getMuzzlePoint(%slot), %target.getCenterPos()) > %img.triggerDist)
 		return false;
 	
@@ -297,7 +295,7 @@ function TurretImage::canTrigger(%img, %obj, %slot, %target)
 		else if(!%img.triggerJet)
 			return false;
 	}
-	
+
 	return true;
 }
 
