@@ -39,6 +39,6 @@ if($AddOn__Weapon_TribalWar && isFile("Add-Ons/Weapon_TribalWar/server.cs")) // 
 
 	// exec("./Weapon_TurretCluster.cs"); // todo
 	exec("./Weapon_TurretRepair.cs");
-	// exec("./Weapon_TurretCharge.cs"); // todo
+	exec("./Weapon_TurretCharge.cs");
 	// exec("./Weapon_TurretSeeker.cs"); // todo
 }
