@@ -27,18 +27,18 @@ exec("./Turret_Deployable.cs");
 exec("./Turret_Barrels.cs");
 exec("./Weapon_TurretPulse.cs");
 exec("./Weapon_TurretPlasma.cs");
-exec("./Weapon_TurretMortar.cs"); // [?] move to extras
 exec("./Weapon_TurretVulcan.cs");
-
-exec("./Power_Generator.cs");
-// exec("./Power_Panel.cs"); // todo
 
 if($AddOn__Weapon_TribalWar && isFile("Add-Ons/Weapon_TribalWar/server.cs")) // extra barrels that require the guns
 {
 	forceRequiredAddon("Weapon_TribalWar");
 
-	// exec("./Weapon_TurretCluster.cs"); // todo
+	exec("./Weapon_TurretMortar.cs");
 	exec("./Weapon_TurretRepair.cs");
 	exec("./Weapon_TurretCharge.cs");
+	// exec("./Weapon_TurretCluster.cs"); // todo
 	// exec("./Weapon_TurretSeeker.cs"); // todo
 }
+
+exec("./Power_Generator.cs");
+// exec("./Power_Panel.cs"); // todo
