@@ -41,4 +41,4 @@ if($AddOn__Weapon_TribalWar && isFile("Add-Ons/Weapon_TribalWar/server.cs")) // 
 }
 
 exec("./Power_Generator.cs");
-// exec("./Power_Panel.cs"); // todo
+exec("./Power_Panel.cs");
