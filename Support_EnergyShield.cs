@@ -6,6 +6,9 @@ function ShapeBase::getCenterPos(%obj)
 		return vectorScale(vectorAdd(%obj.getWorldBoxCenter(), %obj.getPosition()), 0.5);
 }
 
+if(!isFunction(ShapeBaseData, onEnergyShieldBreak))
+	eval("function ShapeBaseData::onEnergyShieldBreak(%obj, %src) { }");
+
 package T2EnergyShield
 {
 	function ShapeBase::Damage(%obj, %src, %pos, %dmg, %type)
