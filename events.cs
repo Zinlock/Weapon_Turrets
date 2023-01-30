@@ -72,9 +72,6 @@ function AIPlayer::turretMountImage(%pl, %name, %force)
 
 	%img = 0;
 
-	talk(%name);
-	talk(%head SPC %head.getMountedImage(0).getName());
-
 	for(%i = 0; %i < datablockGroup.getCount(); %i++)
 	{
 		%db = datablockGroup.getObject(%i);
@@ -82,7 +79,6 @@ function AIPlayer::turretMountImage(%pl, %name, %force)
 		if(%db.isTurretBarrel && (trim(%name) $= trim(%db.turretTitle) || trim(%name) $= trim(%db.uiName)))
 		{
 			%img = %db.turretImage;
-			talk(%img.getName());
 			break;
 		}
 	}

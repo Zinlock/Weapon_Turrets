@@ -14,6 +14,7 @@ function tt(%path)
 
 exec("Add-Ons/Support_ShapelinesV2/server.cs");
 
+exec("./Support_EnergyShield.cs");
 exec("./ballistics.cs");
 exec("./package.cs");
 exec("./functions.cs");

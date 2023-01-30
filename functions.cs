@@ -359,12 +359,6 @@ function Armor::turretOnRepaired(%db, %pl, %src)
 	}
 }
 
-function Armor::turretOnShieldBreak(%db, %pl, %src)
-{
-	if(isObject(%db.energyBreakSound))
-		serverPlay3D(%db.energyBreakSound, %pl.getHackPosition());
-}
-
 function Armor::turretOnPowerLost(%db, %pl)
 {
 	%base = %pl.turretBase;

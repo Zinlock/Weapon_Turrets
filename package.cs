@@ -144,89 +144,23 @@ package TurretPackMain
 	{
 		if(%db.isTurretArmor)
 		{
-			if(!%pl.takeSelfDmg && (%src == %pl || %src.sourceObject == %pl))
+			if(!%pl.takeSelfDmg && (%src == %pl || %src.sourceObject == %pl)) // todo?: make this ignore other turrets too 
 				return;
 
 			if(%pos $= "")
 				%pos = %pl.getHackPosition();
 			
 			$bloodIgnore[%pos] = true;
-
-			if(%db.energyShield > 0 && !%pl.isDisabled && !%pl.isDestroyed && (%pl.isPowered || %pl.turretHead.isPowered))
-			{
-				if(%db.energyDelay > 0)
-				{
-					if(getSimTime() - %pl.lastShieldHitTime < %db.energyDelay * 1000)
-						%pl.setEnergyLevel(%pl.lastShieldHitEnergy);
-				}
-
-				%shield = mClampF(%db.energyShield, 0, 1);
-				%erg = %pl.getEnergyLevel();
-				%ndm = %dmg * %shield;
-
-				if(%ndm > %erg)
-					%ndm = %erg;
-				
-				%nrg = %erg - %ndm;
-
-				if(%nrg <= 0 && %erg > 0)
-					%db.turretOnShieldBreak(%pl, %src);
-
-				%dmg = %dmg - %ndm;
-				%pl.setEnergyLevel(%nrg);
-				
-				if(%pl.getEnergyLevel() > 0)
-				{
-					if(isObject(%db.energySound))
-						serverPlay3D(%db.energySound, %pl.getHackPosition());
-
-					if(isObject(%db.energyShape))
-					{
-						%shape = %pl.lastEnergyShape;
-
-						if(!isObject(%shape))
-						{
-							%shape = new StaticShape() { datablock = %db.energyShape; };
-							%shape.cleanup = %shape.schedule(3000, delete);
-						}
-						else
-						{
-							cancel(%shape.cleanup);
-							%shape.cleanup = %shape.schedule(3000, delete);
-						}
-
-						%s = %db.energyScale;
-
-						if(%s <= 0)
-							%s = 1;
-
-						%shape.setScale(%s SPC %s SPC %s);
-
-						%dir = vectorNormalize(vectorSub(%pos, %pl.getHackPosition()));
-
-						%x = getWord(%dir,0) / 2;
-						%y = (getWord(%dir,1) + 1) / 2;
-						%z = getWord(%dir,2) / 2;
-
-						%shape.setTransform(%pl.getHackPosition() SPC VectorNormalize(%x SPC %y SPC %z) SPC mDegToRad(180));
-						%shape.playThread(0, hit);
-					}
-				}
-				
-				%pl.lastShieldHitEnergy = %pl.getEnergyLevel();
-				%pl.lastShieldHitTime = getSimTime();
-				
-				if(%dmg <= 0)
-					return;
-			}
 		}
 
-		Parent::Damage(%db, %pl, %src, %pos, %dmg, %type);
-
+		%p = Parent::Damage(%db, %pl, %src, %pos, %dmg, %type);
+		
 		if(%db.isTurretArmor)
 			%pl.turretDamageCheck(%src);
+		
+		return %p;
 	}
-
+	
 	function createBloodSplatterExplosion(%pos, %vel, %scale)
 	{
 		if($bloodIgnore[%pos])
