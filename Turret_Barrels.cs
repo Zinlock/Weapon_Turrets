@@ -273,7 +273,7 @@ function TurretImage::canTrigger(%img, %obj, %slot, %target)
 		if(!%img.triggerAir && (%target.getClassName() $= "FlyingVehicle" || %target.getDatablock().lift > 0))
 			return false;
 		
-		if(!%img.triggerGround && %target.getClassName() $= "WheeledVehicle" && %target.getDataBlock().lift <= 0)
+		if(!%img.triggerGround && ((%target.getClassName() $= "WheeledVehicle" && %target.getDataBlock().lift <= 0) || %target.getDataBlock().isHoverVehicle))
 			return false;
 	}
 	else
