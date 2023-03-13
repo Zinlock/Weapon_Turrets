@@ -211,8 +211,6 @@ function Turret_TribalBaseStand::onAdd(%db, %obj)
 		%obj.setNodeColor("ALL", "1 1 1 1");
 		%obj.turretHead.setNodeColor("ALL", "1 1 1 1");
 
-		%obj.isBot = true;
-
 		%obj.playAudio(3, %db.idleSound);
 	}
 
