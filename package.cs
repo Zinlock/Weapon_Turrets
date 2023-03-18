@@ -88,6 +88,9 @@ package TurretPackMain
 		{
 			if(%db.isTurretHead)
 				%pl.schedule(200, onTurretIdleTick);
+			
+			if(%db.defaultScale !$= "")
+				%pl.schedule(0, setScale, %db.defaultScale);
 		}
 	}
 
@@ -146,6 +149,8 @@ package TurretPackMain
 		{
 			if(!%pl.takeSelfDmg && (%src == %pl || %src.sourceObject == %pl)) // todo?: make this ignore other turrets too 
 				return;
+
+			%dmg *= getWord(%pl.getScale(), 2);
 
 			if(%pos $= "")
 				%pos = %pl.getHackPosition();

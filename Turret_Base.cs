@@ -8,6 +8,7 @@ datablock AudioProfile(Turret_TribalDestroyedSound)
 datablock PlayerData(Turret_TribalBaseStand : PlayerStandardArmor) // root rootClose open close
 {
 	paintable = 1;
+	defaultScale = "1.4 1.4 1.4";
 
 	isTurretArmor = true;
 	isTurretHead = false;
