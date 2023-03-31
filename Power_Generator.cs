@@ -76,7 +76,7 @@ datablock PlayerData(Turret_TribalBaseGenerator : PlayerStandardArmor)
 	boundingBox = vectorScale("2.5 2.5 2.5", 4);
 	crouchBoundingBox = vectorScale("2.5 2.5 2.5", 4);
 
-	UIName = "Tribal Base Generator";
+	UIName = "T2: Base Generator";
 };
 
 function Turret_TribalBaseGenerator::turretOnPowerLost(%db, %obj)
@@ -126,9 +126,7 @@ function Turret_TribalBaseGenerator::onAdd(%db, %obj)
 	if(!isObject(%obj.client))
 	{
 		%obj.isTribalBaseGenerator = true;
-		%obj.setNodeColor("ALL", "1 1 1 1");
-		%obj.isBot = true;
-		
+		%obj.setNodeColor("ALL", "1 1 1 1");		
 		%obj.playAudio(3, %db.idleSound);
 	}
 

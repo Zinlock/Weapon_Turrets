@@ -14,7 +14,7 @@ datablock PlayerData(Turret_TribalBasePanel : Turret_TribalBaseGenerator)
 	boundingBox = vectorScale("2.5 2.5 2.2", 4);
 	crouchBoundingBox = vectorScale("2.5 2.5 2.2", 4);
 
-	UIName = "Tribal Base Solar Panel";
+	UIName = "T2: Base Solar Panel";
 };
 
 function Turret_TribalBasePanel::turretOnPowerLost(%db, %obj)

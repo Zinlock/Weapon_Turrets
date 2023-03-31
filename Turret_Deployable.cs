@@ -1,5 +1,6 @@
 datablock PlayerData(Turret_TribalDeployableStand : Turret_TribalBaseStand) // root rootClose open close
 {
+	defaultScale = "1 1 1";
 	TurretHeadData = Turret_TribalDeployableArms;
 
 	idleSound = Turret_BaseIdleSound;
@@ -22,7 +23,7 @@ datablock PlayerData(Turret_TribalDeployableStand : Turret_TribalBaseStand) // r
 	boundingBox = vectorScale("2.25 2.25 2.25", 4);
 	crouchBoundingBox = vectorScale("2.25 2.25 2.25", 4);
 
-	UIName = "Tribal Deployable Turret";
+	UIName = "T2: Deployable Turret";
 };
 
 datablock PlayerData(Turret_TribalDeployableArms : Turret_TribalDeployableStand) // root idle look

@@ -80,7 +80,7 @@ datablock PlayerData(Turret_TribalBaseStand : PlayerStandardArmor) // root rootC
 	boundingBox = vectorScale("2.25 2.25 2.25", 4);
 	crouchBoundingBox = vectorScale("2.25 2.25 2.25", 4);
 
-	UIName = "Tribal Base Turret";
+	UIName = "T2: Base Turret";
 };
 
 datablock PlayerData(Turret_TribalBaseArms : Turret_TribalBaseStand) // root idle look
