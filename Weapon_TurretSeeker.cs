@@ -40,7 +40,7 @@ datablock ItemData(Turret_TribalSeekerBoxItem)
 	friction = 0.6;
 	emap = true;
 
-	uiName = "TB: Seeker Kit";
+	uiName = "TB: Heat Seeker Kit";
 	iconName = Turret_TribalSeekerItem.iconName;
 	doColorShift = true;
 	colorShiftColor = Turret_BoxPlaceImage.colorShiftColor;
@@ -52,7 +52,7 @@ datablock ItemData(Turret_TribalSeekerBoxItem)
 	turretImage = Turret_TribalSeekerItem.turretImage;
 	turretData = Turret_TribalDeployableStand;
 	turretUseHead = true;
-	turretTitle = "Seeker Turret";
+	turretTitle = "Heat Seeker Turret";
 	turretDesc = Turret_TribalSeekerItem.turretDesc;
 };
 
