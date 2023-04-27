@@ -257,6 +257,21 @@ function TurretBarrel::onAdd(%db, %item)
 	%item.playThread(0, rootClose);
 }
 
+function TurretImage::onTargetFound(%img, %obj, %slot, %target)
+{
+	
+}
+
+function TurretImage::onTargetTick(%img, %obj, %slot, %target)
+{
+	
+}
+
+function TurretImage::onTargetLost(%img, %obj, %slot, %target)
+{
+	
+}
+
 function TurretImage::canTrigger(%img, %obj, %slot, %target)
 {
 	if((%target.isCloaked || %target.isCloaked()) && !%img.triggerCloak)

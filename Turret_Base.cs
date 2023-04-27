@@ -231,7 +231,10 @@ function Turret_TribalBaseStand::onDriverLeave(%db, %obj, %src)
 	if(%src == %obj.turretHead)
 	{
 		if(isObject(%obj) && isObject(%src))
+		{
 			%obj.schedule(0, mountObject, %src, 0);
+			%src.setControlObject(%src);
+		}
 	}
 
 	Parent::onDriverLeave(%db, %obj, %src);
@@ -264,6 +267,8 @@ function Turret_TribalBaseArms::turretCanTrigger(%db, %pl, %target)
 
 function Turret_TribalBaseArms::turretOnTargetFound(%db, %pl, %target)
 {
+	Parent::turretOnTargetFound(%db, %pl, %target);
+
 	if(isEventPending(%pl.idle))
 	{
 		cancel(%pl.idle);
@@ -287,6 +292,8 @@ function Turret_TribalBaseArms::turretOnTargetFound(%db, %pl, %target)
 
 function Turret_TribalBaseArms::turretOnTargetLost(%db, %pl, %target)
 {
+	Parent::turretOnTargetLost(%db, %pl, %target);
+
 	cancel(%pl.fire);
 	%pl.setImageTrigger(0, 0);
 
@@ -295,6 +302,8 @@ function Turret_TribalBaseArms::turretOnTargetLost(%db, %pl, %target)
 
 function Turret_TribalBaseArms::turretOnTargetTick(%db, %pl, %target)
 {
+	Parent::turretOnTargetTick(%db, %pl, %target);
+
 	%img = %pl.getMountedImage(0);
 	%pos = %img.getAimPoint(%pl, 0, %target); //ProjectilePredict(%pl.getMuzzlePoint(0), %img.projectileSpeed, %target.getCenterPos(), %target.getVelocity(), %img.projectileGravity);
 

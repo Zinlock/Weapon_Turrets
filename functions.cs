@@ -149,17 +149,17 @@ function Armor::turretOnIdleTick(%db, %pl)
 
 function Armor::turretOnTargetTick(%db, %pl, %target)
 {
-	%pl.setAimPointHack(%target.getCenterPos());
+	%pl.getMountedImage(0).onTargetTick(%pl, 0, %target);
 }
 
 function Armor::turretOnTargetFound(%db, %pl, %target)
 {
-	
+	%pl.getMountedImage(0).onTargetFound(%pl, 0, %target);
 }
 
 function Armor::turretOnTargetLost(%db, %pl, %target)
 {
-	
+	%pl.getMountedImage(0).onTargetLost(%pl, 0, %target);
 }
 
 function Armor::turretOnDestroyed(%db, %pl, %src)

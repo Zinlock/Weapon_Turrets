@@ -339,6 +339,8 @@ function Turret_TribalPulseImage::onFire1(%img, %obj, %slot)
 		%obj.stopAudio(0);
 		%obj.playAudio(0, %img.fireSound);
 	}
+
+	return %shells;
 }
 
 function Turret_TribalPulseImage::onFire2(%img, %obj, %slot) { Turret_TribalPulseImage::onFire1(%img, %obj, %slot); }
