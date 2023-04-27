@@ -285,7 +285,7 @@ function TurretImage::canTrigger(%img, %obj, %slot, %target)
 	
 	if(!(%target.getType() & $TypeMasks::PlayerObjectType))
 	{
-		if(!%img.triggerAir && (%target.getClassName() $= "FlyingVehicle" || %target.getDatablock().lift > 0))
+		if(!%img.triggerAir && (%target.getClassName() $= "FlyingVehicle" && !%target.getDataBlock().isHoverVehicle || %target.getDatablock().lift > 0))
 			return false;
 		
 		if(!%img.triggerGround && ((%target.getClassName() $= "WheeledVehicle" && %target.getDataBlock().lift <= 0) || %target.getDataBlock().isHoverVehicle))
