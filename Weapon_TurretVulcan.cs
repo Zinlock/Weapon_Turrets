@@ -75,7 +75,7 @@ datablock ExplosionData(Turret_TribalVulcanExplosion : gunExplosion)
 datablock ProjectileData(Turret_TribalVulcanProjectile)
 {
 	projectileShapeName = "base/data/shapes/empty.dts";
-	directDamage        = 4;
+	directDamage        = 6;
 	directDamageType = $DamageType::AE;
 	radiusDamageType = $DamageType::AE;
 	impactImpulse	   = 75;
@@ -107,8 +107,25 @@ datablock ProjectileData(Turret_TribalVulcanProjectile)
 	lightRadius = 5;
 	lightColor  = "1 0.4 0";
 
+	vehicleDamageMult = 0.75;
+
 	uiName = "";
 };
+
+function Turret_TribalVulcanProjectile::damage(%this,%obj,%col,%fade,%pos,%normal)
+{
+	%damageType = $DamageType::Direct;
+	if(%this.DirectDamageType)
+		%damageType = %this.DirectDamageType;
+
+	%scale = getWord(%obj.getScale(), 2);
+	%directDamage = %this.directDamage * %scale;
+
+	if(%col.getType() & $TypeMasks::PlayerObjectType && !%col.getDataBlock().isTurretArmor)
+		%col.damage(%obj, %pos, %directDamage, %damageType);
+	else
+		%col.damage(%obj, %pos, %directDamage * %this.vehicleDamageMult, %damageType);
+}
 
 datablock ItemData(Turret_TribalVulcanItem : Turret_TribalPulseItem)
 {

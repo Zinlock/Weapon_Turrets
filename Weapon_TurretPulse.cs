@@ -182,8 +182,25 @@ datablock ProjectileData(Turret_TribalPulseProjectile)
 	lightRadius = 2.5;
 	lightColor  = "0.0 0.0 1.0";
 
+	vehicleDamageMult = 2;
+
 	uiName = "";
 };
+
+function Turret_TribalPulseProjectile::damage(%this,%obj,%col,%fade,%pos,%normal)
+{
+	%damageType = $DamageType::Direct;
+	if(%this.DirectDamageType)
+		%damageType = %this.DirectDamageType;
+
+	%scale = getWord(%obj.getScale(), 2);
+	%directDamage = %this.directDamage * %scale;
+
+	if(%col.getType() & $TypeMasks::PlayerObjectType && !%col.getDataBlock().isTurretArmor)
+		%col.damage(%obj, %pos, %directDamage, %damageType);
+	else
+		%col.damage(%obj, %pos, %directDamage * %this.vehicleDamageMult, %damageType);
+}
 
 datablock ItemData(Turret_TribalPulseItem)
 {
