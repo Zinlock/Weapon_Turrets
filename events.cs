@@ -1,12 +1,12 @@
-$t = "Self fxDtsBrick" TAB "Turret Player" TAB "SourcePlayer Player" TAB "SourceClient GameConnection" TAB "Minigame Minigame";
-registerInputEvent("fxDtsBrick", "onTurretSpawn",     "Self fxDtsBrick" TAB "Turret Player" TAB "Minigame Minigame");
+$t = "Self fxDtsBrick" TAB "Turret Bot" TAB "SourcePlayer Player" TAB "SourceClient GameConnection" TAB "Minigame Minigame";
+registerInputEvent("fxDtsBrick", "onTurretSpawn",     "Self fxDtsBrick" TAB "Turret Bot" TAB "Minigame Minigame");
 registerInputEvent("fxDtsBrick", "onTurretDisabled",  $t);
 registerInputEvent("fxDtsBrick", "onTurretDestroyed", $t);
 registerInputEvent("fxDtsBrick", "onTurretRecovered", $t);
 registerInputEvent("fxDtsBrick", "onTurretRepaired",  $t);
 
-$t = "Self fxDtsBrick" TAB "Generator Player" TAB "SourcePlayer Player" TAB "SourceClient GameConnection" TAB "Minigame Minigame";
-registerInputEvent("fxDtsBrick", "onGeneratorSpawn",     "Self fxDtsBrick" TAB "Generator Player" TAB "Minigame Minigame");
+$t = "Self fxDtsBrick" TAB "Generator Bot" TAB "SourcePlayer Player" TAB "SourceClient GameConnection" TAB "Minigame Minigame";
+registerInputEvent("fxDtsBrick", "onGeneratorSpawn",     "Self fxDtsBrick" TAB "Generator Bot" TAB "Minigame Minigame");
 registerInputEvent("fxDtsBrick", "onGeneratorDisabled",  $t);
 registerInputEvent("fxDtsBrick", "onGeneratorDestroyed", $t);
 registerInputEvent("fxDtsBrick", "onGeneratorRecovered", $t);
@@ -20,11 +20,11 @@ function fxDtsBrick::turretMountImage(%brk, %name, %force)
 		%brk.vehicle.turretMountImage(%name, %force);
 }
 
-registerOutputEvent("Player", "turretMountImage", "string 200 200" TAB "bool", false);
-registerOutputEvent("Player", "turretPowerLink", "string 200 200", false);
+registerOutputEvent("Bot", "turretMountImage", "string 200 200" TAB "bool", false);
+registerOutputEvent("Bot", "turretPowerLink", "string 200 200", false);
 
-function Player::turretPowerLink() { }
-function Player::turretMountImage() { }
+// function Player::turretPowerLink() { }
+// function Player::turretMountImage() { }
 
 function AIPlayer::turretPowerLink(%pl, %name)
 {
