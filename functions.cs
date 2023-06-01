@@ -4,6 +4,11 @@ $maxTurretEmitters = 4;
 
 function turretIsFriendly(%pl, %target)
 {	
+	%base = %pl.turretBase;
+
+	if(!isObject(%base))
+		%base = %pl;
+
 	if(isObject(%pl.sourceClient))
 	{
 		if(%pl.sourceClient == %target.client)
@@ -37,9 +42,9 @@ function turretIsFriendly(%pl, %target)
 			}
 		}
 	}
-	else if(isObject(%pl.turretBase.spawnBrick))
+	else if(isObject(%base.spawnBrick))
 	{
-		%mg = getMinigameFromObject(%pl.turretBase);
+		%mg = getMinigameFromObject(%base);
 		%mg2 = getMinigameFromObject(%target);
 
 		if(%mg != %mg2 || !isObject(%mg) || !isObject(%mg2))
@@ -55,7 +60,7 @@ function turretIsFriendly(%pl, %target)
 		
 		if(%mg.isSlayerMinigame)
 		{
-			%teamA = %mg.teams.getTeamFromName(%pl.turretBase.spawnBrick.getControllingTeam());
+			%teamA = %mg.teams.getTeamFromName(%base.spawnBrick.getControllingTeam());
 
 			if(isObject(%teamA))
 			{
@@ -76,7 +81,7 @@ function turretIsFriendly(%pl, %target)
 		}
 		else
 		{
-			%dm = minigameCanDamage(%pl.turretBase, %target);
+			%dm = minigameCanDamage(%base, %target);
 			if(%dm == 0)
 				return 1;
 		}
