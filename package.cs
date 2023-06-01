@@ -105,14 +105,6 @@ package TurretPackMain
 		}
 	}
 
-	function Armor::onTrigger(%db, %pl, %trig, %val)
-	{
-		if(%trig == 4)
-			%pl.jetDown = %val;
-
-		return Parent::onTrigger(%db, %pl, %trig, %val);
-	}
-
 	function AIPlayer::AEDumpAmmo(%pl)
 	{
 		%db = %pl.getDataBlock();
@@ -256,3 +248,19 @@ package TurretPackMain
 	}
 };
 activatePackage(TurretPackMain);
+
+package playerJettingPackage
+{
+	function Armor::onTrigger(%db, %pl, %trig, %val)
+	{
+		if(%trig == 4)
+		{
+			%pl.jetDown = %val;
+			if(%val) %pl.jetDownTime = getSimTime();
+			else %pl.jetUpTime = getSimTime();
+		}
+
+		return Parent::onTrigger(%db, %pl, %trig, %val);
+	}
+};
+activatePackage(playerJettingPackage);
