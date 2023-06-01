@@ -184,7 +184,7 @@ datablock ShapeBaseImageData(Turret_TribalVulcanImage : Turret_TribalPulseImage)
 
 	triggerTime = 400;
 	triggerQuickTime = 200;
-	triggerDist = 125;
+	triggerDist = 256;
 	triggerWalk = true;
 	triggerWalkTime = 0;
 	triggerJet = true;

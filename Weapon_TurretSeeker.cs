@@ -69,7 +69,7 @@ datablock ShapeBaseImageData(Turret_TribalSeekerImage : Turret_TribalPulseImage)
 
 	triggerTime = 1500;
 	triggerQuickTime = 1000;
-	triggerDist = 200;
+	triggerDist = 400;
 	triggerWalk = false;
 	triggerWalkTime = 1000;
 	triggerJet = true;
@@ -82,7 +82,7 @@ datablock ShapeBaseImageData(Turret_TribalSeekerImage : Turret_TribalPulseImage)
 	projectile = TW_HeatSeekerProjectile;
 	projectileSpread = 0;
 	projectileCount = 1;
-	projectileSpeed = 75;
+	projectileSpeed = 125;
 	projectileTolerance = 1;
 	projectileArc = false;
 
@@ -104,7 +104,7 @@ datablock ShapeBaseImageData(Turret_TribalSeekerImage : Turret_TribalPulseImage)
 	
 	stateName[3] = "delay";
 	stateTransitionOnTimeout[3] = "ready";
-	stateTimeoutValue[3] = 4.0;
+	stateTimeoutValue[3] = 2.5;
 };
 
 function Turret_TribalSeekerImage::onTargetTick(%img, %obj, %slot, %target)

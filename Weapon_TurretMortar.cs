@@ -62,7 +62,7 @@ datablock ShapeBaseImageData(Turret_TribalMortarImage : Turret_TribalPulseImage)
 
 	triggerTime = 1500;
 	triggerQuickTime = 650;
-	triggerDist = 175;
+	triggerDist = 512;
 	triggerWalk = true;
 	triggerWalkTime = 0;
 	triggerJet = true;
@@ -75,7 +75,7 @@ datablock ShapeBaseImageData(Turret_TribalMortarImage : Turret_TribalPulseImage)
 	projectile = TW_FusionMortarProjectile;
 	projectileSpread = 0;
 	projectileCount = 1;
-	projectileSpeed = 50;
+	projectileSpeed = 100;
 	projectileTolerance = 15;
 	projectileArc = false;
 

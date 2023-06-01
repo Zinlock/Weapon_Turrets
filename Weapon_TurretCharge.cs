@@ -55,7 +55,7 @@ datablock ShapeBaseImageData(Turret_TribalChargeImage : Turret_TribalPulseImage)
 
 	triggerTime = 400;
 	triggerQuickTime = 200;
-	triggerDist = 32;
+	triggerDist = 48;
 	triggerWalk = true;
 	triggerWalkTime = 0;
 	triggerJet = true;
