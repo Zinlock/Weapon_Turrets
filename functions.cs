@@ -3,7 +3,19 @@ $maxTurretEmitters = 4;
 // datablock functions //
 
 function turretIsFriendly(%pl, %target)
-{	
+{
+	if((%target.getType() & $TypeMasks::VehicleObjectType) || isObject(%target.spawnBrick))
+	{
+		for(%i = 0; %i < %target.getDataBlock().numMountPoints; %i++)
+		{
+			%obj = %target.getMountNodeObject(%i);
+			if(isObject(%obj) && !turretIsFriendly(%pl, %obj))
+				return false;
+		}
+
+		return true;
+	}
+
 	%base = %pl.turretBase;
 
 	if(!isObject(%base))
