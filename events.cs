@@ -1,16 +1,14 @@
-$t = "Self fxDtsBrick" TAB "Turret Bot" TAB "SourcePlayer Player" TAB "SourceClient GameConnection" TAB "Minigame Minigame";
-registerInputEvent("fxDtsBrick", "onTurretSpawn",     "Self fxDtsBrick" TAB "Turret Bot" TAB "Minigame Minigame");
-registerInputEvent("fxDtsBrick", "onTurretDisabled",  $t);
-registerInputEvent("fxDtsBrick", "onTurretDestroyed", $t);
-registerInputEvent("fxDtsBrick", "onTurretRecovered", $t);
-registerInputEvent("fxDtsBrick", "onTurretRepaired",  $t);
+function turretRegisterInputs(%type)
+{
+	%t = "Self fxDtsBrick" TAB %type @ " Bot" TAB "SourcePlayer Player" TAB "SourceClient GameConnection" TAB "Minigame Minigame";
+	registerInputEvent("fxDtsBrick", "on" @ %type @ "Spawn",     "Self fxDtsBrick" TAB %type @ " Bot" TAB "Minigame Minigame");
+	registerInputEvent("fxDtsBrick", "on" @ %type @ "Disabled",  %t);
+	registerInputEvent("fxDtsBrick", "on" @ %type @ "Destroyed", %t);
+	registerInputEvent("fxDtsBrick", "on" @ %type @ "Recovered", %t);
+	registerInputEvent("fxDtsBrick", "on" @ %type @ "Repaired",  %t);
+}
 
-$t = "Self fxDtsBrick" TAB "Generator Bot" TAB "SourcePlayer Player" TAB "SourceClient GameConnection" TAB "Minigame Minigame";
-registerInputEvent("fxDtsBrick", "onGeneratorSpawn",     "Self fxDtsBrick" TAB "Generator Bot" TAB "Minigame Minigame");
-registerInputEvent("fxDtsBrick", "onGeneratorDisabled",  $t);
-registerInputEvent("fxDtsBrick", "onGeneratorDestroyed", $t);
-registerInputEvent("fxDtsBrick", "onGeneratorRecovered", $t);
-registerInputEvent("fxDtsBrick", "onGeneratorRepaired",  $t);
+turretRegisterInputs("Station");
 
 registerOutputEvent("fxDtsBrick", "turretMountImage", "string 200 200" TAB "bool", false);
 
@@ -94,32 +92,22 @@ function AIPlayer::turretMountImage(%pl, %name, %force)
 	}
 }
 
-function fxDtsBrick::onTurretSpawn(%brk, %pl)
-{
-	$inputTarget_Turret = %pl;
-	$inputTarget_Minigame = getMinigameFromObject(%pl);
-	
-	%brk.processInputEvent("onTurretSpawn", %pl);
-}
-
-function fxDtsBrick::onGeneratorSpawn(%brk, %pl)
-{
-	$inputTarget_Generator = %pl;
-	$inputTarget_Minigame = getMinigameFromObject(%pl);
-	
-	%brk.processInputEvent("onGeneratorSpawn", %pl);
-}
-
 function fxDtsBrick::onTurret(%brk, %pl, %src, %evt)
 {
 	if(isObject(%src))
 		%class = %src.getClassName();
 
-	$inputTarget_Turret = %pl;
-	$inputTarget_Generator = %pl;
+	%db = %pl.getDataBlock();
+
+	%evt = "onStation" @ %evt;
+
+	$inputTarget_Station = %pl;
 	$inputTarget_SourcePlayer = (%class $= "Player" ? %src : (%class $= "GameConnection" ? %src.player : %src.sourceObject));
 	$inputTarget_SourceClient = %scl = (%class $= "GameConnection" ? %src : %src.client);
 	$inputTarget_Minigame = getMinigameFromObject(%pl);
 	
-	%brk.processInputEvent(%evt, %scl);
+	if(%src == %pl)
+		%brk.processInputEvent(%evt, %pl);
+	else
+		%brk.processInputEvent(%evt, %scl);
 }

@@ -182,13 +182,8 @@ function Armor::turretOnTargetLost(%db, %pl, %target)
 function Armor::turretOnDestroyed(%db, %pl, %src)
 {
 	if(isObject(%pl.spawnBrick) && !isObject(%pl.sourceClient))
-	{
-		if(%db.isPowerGenerator)
-			%pl.spawnBrick.onTurret(%pl, %src, "onGeneratorDestroyed");
-		else
-			%pl.spawnBrick.onTurret(%pl, %src, "onTurretDestroyed");
-	}
-	
+		%pl.spawnBrick.onTurret(%pl, %src, "Destroyed");
+
 	if(getSimTime() - %pl.lastExplosionTime > 2000)
 	{
 		%pl.lastExplosionTime = getSimTime();
@@ -273,23 +268,13 @@ function Armor::turretOnDisabled(%db, %pl, %src)
 	}
 	
 	if(isObject(%pl.spawnBrick) && !isObject(%pl.sourceClient))
-	{
-		if(%db.isPowerGenerator)
-			%pl.spawnBrick.onTurret(%pl, %src, "onGeneratorDisabled");
-		else
-			%pl.spawnBrick.onTurret(%pl, %src, "onTurretDisabled");
-	}
+		%pl.spawnBrick.onTurret(%pl, %src, "Disabled");
 }
 
 function Armor::turretOnRecovered(%db, %pl, %src)
 {
 	if(isObject(%pl.spawnBrick) && !isObject(%pl.sourceClient))
-	{
-		if(%db.isPowerGenerator)
-			%pl.spawnBrick.onTurret(%pl, %src, "onGeneratorRecovered");
-		else
-			%pl.spawnBrick.onTurret(%pl, %src, "onTurretRecovered");
-	}
+		%pl.spawnBrick.onTurret(%pl, %src, "Recovered");
 	
 	for(%i = 0; %i < $maxTurretEmitters; %i++)
 	{
@@ -339,12 +324,7 @@ function Armor::turretOnRepaired(%db, %pl, %src)
 		%head = %pl;
 	
 	if(isObject(%pl.spawnBrick) && !isObject(%pl.sourceClient))
-	{
-		if(%db.isPowerGenerator)
-			%pl.spawnBrick.onTurret(%pl, %src, "onGeneratorRepaired");
-		else
-			%pl.spawnBrick.onTurret(%pl, %src, "onTurretRepaired");
-	}
+		%pl.spawnBrick.onTurret(%pl, %src, "Repaired");
 	
 	for(%i = 0; %i < $maxTurretEmitters; %i++)
 	{
@@ -433,10 +413,7 @@ function Armor::turretOnPowerRestored(%db, %pl)
 
 function Armor::turretOnSpawn(%db, %pl)
 {
-	if(%db.isPowerGenerator)
-		%pl.spawnBrick.onGeneratorSpawn(%pl);
-	else
-		%pl.spawnBrick.onTurretSpawn(%pl);
+	%pl.spawnBrick.onTurret(%pl, %pl, "Spawn");
 }
 
 function Armor::turretCanMount(%db, %pl, %src, %img)
