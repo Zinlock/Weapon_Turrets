@@ -27,7 +27,7 @@ datablock ItemData(Turret_TribalChargeBoxItem)
 	emap = true;
 
 	uiName = "TB: ELF Kit";
-	iconName = Turret_TribalChargeItem.iconName;
+	iconName = "./ico/kit";
 	doColorShift = true;
 	colorShiftColor = Turret_BoxPlaceImage.colorShiftColor;
 

@@ -156,7 +156,7 @@ datablock ItemData(Turret_TribalVulcanBoxItem)
 	emap = true;
 
 	uiName = "TB: Vulcan Kit";
-	iconName = Turret_TribalVulcanItem.iconName;
+	iconName = "./ico/kit";
 	doColorShift = true;
 	colorShiftColor = Turret_BoxPlaceImage.colorShiftColor;
 

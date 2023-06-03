@@ -27,7 +27,7 @@ datablock ItemData(Turret_TribalRepairBoxItem)
 	emap = true;
 
 	uiName = "TB: Repair Kit";
-	iconName = Turret_TribalRepairItem.iconName;
+	iconName = "./ico/kit";
 	doColorShift = true;
 	colorShiftColor = Turret_BoxPlaceImage.colorShiftColor;
 

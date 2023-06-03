@@ -303,7 +303,7 @@ datablock ItemData(Turret_TribalPlasmaBoxItem)
 	emap = true;
 
 	uiName = "TB: Plasma Kit";
-	iconName = Turret_TribalPlasmaItem.iconName;
+	iconName = "./ico/kit";
 	doColorShift = true;
 	colorShiftColor = Turret_BoxPlaceImage.colorShiftColor;
 

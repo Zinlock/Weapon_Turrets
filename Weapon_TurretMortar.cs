@@ -34,7 +34,7 @@ datablock ItemData(Turret_TribalMortarBoxItem)
 	emap = true;
 
 	uiName = "TB: Mortar Kit";
-	iconName = Turret_TribalMortarItem.iconName;
+	iconName = "./ico/kit";
 	doColorShift = true;
 	colorShiftColor = Turret_BoxPlaceImage.colorShiftColor;
 

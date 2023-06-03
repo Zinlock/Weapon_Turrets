@@ -243,7 +243,7 @@ datablock ItemData(Turret_TribalPulseBoxItem)
 	emap = true;
 
 	uiName = "TB: Anti Air Kit";
-	iconName = Turret_TribalPulseItem.iconName;
+	iconName = "./ico/kit";
 	doColorShift = true;
 	colorShiftColor = Turret_BoxPlaceImage.colorShiftColor;
 
