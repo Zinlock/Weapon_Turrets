@@ -628,6 +628,14 @@ function AIPlayer::turretUnJam(%obj)
 
 // support functions //
 
+function MatrixInverse(%m) // by Val
+{
+	%inv_rot = vectorScale(getWords(%m, 3, 5), -1) SPC getWord(%m, 6);
+	%inv_pos_mat = MatrixMultiply("0 0 0" SPC %inv_rot, %m);
+	
+	return vectorScale(getWords(%inv_pos_mat, 0, 2), -1) SPC %inv_rot;
+}
+
 function AIPlayer::setAimPointHack(%pl, %pos)
 {
 	if(!%pl.isMounted())
@@ -635,51 +643,11 @@ function AIPlayer::setAimPointHack(%pl, %pos)
 	else
 	{
 		%mount = %pl.getObjectMount();
-		%fwd = %mount.getForwardVector();
-		%rgt = getWord(%fwd, 1) SPC (-1 * getWord(%fwd, 0)) SPC getWord(%fwd, 2);
-		%dot = vectorDot(%rgt, "0 1 0");
-		%rot = mAcos(vectorDot(%fwd, "0 1 0"));
-		%right = %dot < 0;
+		%eye = %pl.getEyePoint();
 
-		%vec = vectorNormalize(vectorSub(%pos, %pl.getEyePoint()));
-		%dist = vectorDist(%pos, %pl.getEyePoint());
+		%mtx = MatrixMultiply(MatrixInverse(%mount.getTransform()), %pos);
+		%npos = vectorAdd(%eye, %mtx);
 
-		%bvec = setWord(vectorScale(getWords(%vec, 0, 1), -1), 2, getWord(%vec, 2));
-
-		if(!%right)
-			%rvec = getWord(%vec, 1) SPC (getWord(%vec, 0) * -1) SPC getWord(%vec, 2);
-		else
-			%rvec = getWord(%bvec, 1) SPC (getWord(%bvec, 0) * -1) SPC getWord(%bvec, 2);
-		
-		if(%rot >= 0 && %rot <= $pi/2) // 0 - 90
-		{
-			%fAmt = vectorScale(%vec, 1 - (%rot / ($pi/2)));
-			%rAmt = vectorScale(%rvec, %rot / ($pi/2));
-			
-			%nvec = vectorNormalize(vectorAdd(%fAmt, %rAmt));
-		}
-		else if(%rot >= $pi/2 && %rot <= $pi) // 90 - 180
-		{
-			%nrot = %rot - $pi/2;
-
-			%fAmt = vectorScale(%rvec, 1 - (%nrot / ($pi/2)));
-			%rAmt = vectorScale(%bvec, %nrot / ($pi/2));
-			
-			%nvec = vectorNormalize(vectorAdd(%fAmt, %rAmt));
-		}
-
-		%npos = vectorAdd(%pl.getEyePoint(), vectorScale(vectorNormalize(%nvec), %dist));
-
-		if($tlinedebug)
-		{
-			drawArrow(%pl.getEyePoint(), %vec, "0 0 1 0.5", 2.5, 0.2).schedule(500,delete);
-			
-			if(%right)
-				drawArrow(%pl.getEyePoint(), %nvec, "1 1 0 0.5", 2.5, 0.2).schedule(500,delete);
-			else
-				drawArrow(%pl.getEyePoint(), %nvec, "1 0 0 0.5", 2.5, 0.2).schedule(500,delete);
-		}
-		
 		%pl.setAimLocation(%npos);
 	}
 }
