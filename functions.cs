@@ -649,19 +649,35 @@ function MatrixInverse(%m) // by Val
 	return vectorScale(getWords(%inv_pos_mat, 0, 2), -1) SPC %inv_rot;
 }
 
-function AIPlayer::setAimPointHack(%pl, %pos)
+function AIPlayer::setAimPointHack(%pl, %point)
 {
 	if(!%pl.isMounted())
 		%pl.setAimLocation(%pos);
 	else
 	{
 		%mount = %pl.getObjectMount();
-		%eye = %pl.getEyePoint();
+		%pos = %pl.getPosition();
 
-		%mtx = MatrixMultiply(MatrixInverse(%mount.getTransform()), %pos);
-		%npos = vectorAdd(%eye, %mtx);
+		// %dist = vectorDist(%pos, %mount.getPosition());
+		// %ang = mRadToDeg(mAcos(vectorDot(%mount.getUpVector(), "0 0 1")));
+
+		// talk(%ang);
+		// talk((%ang / 180) * %dist * vectorDist(%pos, %point));
+		// talk((%ang / 180) * %dist * 2);
+
+		// %point = vectorAdd(%point, vectorScale("0 0 1", (%ang / 180) * %dist * 2));
+
+		%xform = MatrixInverse(%mount.getTransform());
+		%mtx = MatrixMultiply(%xform, %point @ "0 0 1 0");
+		%npos = vectorAdd(%pos, %mtx);
 
 		%pl.setAimLocation(%npos);
+
+		if($tlinedebug)
+		{
+			drawArrow(%pl.getEyePoint(), vectorSub(%point, %pos), "0 1 0 0.5", 1, 1.0).schedule(500,delete);
+			drawArrow(%pl.getEyePoint(), vectorSub(%npos,  %pos), "1 0 0 0.5", 1, 1.0).schedule(500,delete);
+		}
 	}
 }
 

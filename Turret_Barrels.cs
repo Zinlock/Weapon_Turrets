@@ -324,5 +324,7 @@ function TurretImage::getAimPoint(%img, %obj, %slot, %target)
 	%dist = vectorDist(%pos, %targ);
 	%time = %dist / %img.projectileSpeed;
 
-	return vectorAdd(%targ, "0 0 " @ ((getWord(%target.getObjectBox(), 5) / 8) * (%time * %grav + (1 - %grav)))); // this is dumb, but it works
+	%div = 8 - 8 * (1 - (vectorDot(%obj.getUpVector(), "0 0 1") + 1 / 2));
+
+	return vectorAdd(%targ, "0 0 " @ ((getWord(%target.getObjectBox(), 5) / %div) * (%time * %grav + (1 - %grav)))); // this is dumb, but it works
 }
