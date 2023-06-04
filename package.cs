@@ -139,7 +139,7 @@ package TurretPackMain
 	{
 		if(%db.isTurretArmor)
 		{
-			if(!%pl.takeSelfDmg && (%src == %pl || %src.sourceObject == %pl)) // todo?: make this ignore other turrets too 
+			if(!%pl.takeSelfDmg && (%src == %pl || %src.sourceObject == %pl) || %src.getDataBlock().isTurretArmor || %src.sourceObject.getDataBlock().isTurretArmor)
 				return;
 
 			%dmg *= getWord(%pl.getScale(), 2);
