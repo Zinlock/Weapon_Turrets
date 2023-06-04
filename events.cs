@@ -21,6 +21,8 @@ function fxDtsBrick::turretMountImage(%brk, %name, %force)
 registerOutputEvent("Bot", "turretMountImage", "string 200 200" TAB "bool", false);
 registerOutputEvent("Bot", "turretPowerLink", "string 200 200", false);
 
+registerOutputEvent("Bot", "turretTurn", "int -180 180 0", false);
+
 // function Player::turretPowerLink() { }
 // function Player::turretMountImage() { }
 
@@ -89,6 +91,30 @@ function AIPlayer::turretMountImage(%pl, %name, %force)
 		%head.mountImage(%img, 0);
 		%head.triggerTeam = %img.triggerTeam;
 		%head.triggerHeal = %img.triggerHeal;
+	}
+}
+
+function AIPlayer::turretTurn(%pl, %amt)
+{
+	%rad = mDegToRad(%amt);
+
+	%xform = %pl.getTransform();
+
+	%rot = getWord(%xform, 6) + %rad;
+
+	%pl.setTransform(setWord(%xform, 6, %rot));
+
+	if(isObject(%pad = %pl.vPad))
+	{
+		%xform = %pad.getTransform();
+
+		%xform = setWord(%xform, 3, "0");
+		%xform = setWord(%xform, 4, "0");
+		%xform = setWord(%xform, 5, "1");
+
+		%rot = getWord(%xform, 6) + %rad;
+
+		%pad.setTransform(setWord(%xform, 6, %rot));
 	}
 }
 
