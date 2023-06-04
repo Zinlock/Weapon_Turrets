@@ -628,6 +628,19 @@ function AIPlayer::turretUnJam(%obj)
 
 // support functions //
 
+function Normal2Rotation(%normal)  
+{  
+	if(getWord(%normal, 2) == 1 || getWord(%normal, 2) == -1)
+		%rotAxis = vectorNormalize(vectorCross(%normal, "0 1 0"));
+	else
+		%rotAxis = vectorNormalize(vectorCross(%normal, "0 0 1"));
+
+	%initialAngle = mACos(vectorDot(%normal, "0 0 1"));
+	%rotation = %rotAxis SPC mRadtoDeg(%initialAngle);
+
+	return %rotation;
+}
+
 function MatrixInverse(%m) // by Val
 {
 	%inv_rot = vectorScale(getWords(%m, 3, 5), -1) SPC getWord(%m, 6);

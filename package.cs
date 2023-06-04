@@ -64,6 +64,9 @@ package TurretPackMain
 	{
 		if(%db.isTurretArmor)
 		{
+			if(isObject(%pl.wallMount))
+				%pl.wallMount.delete();
+
 			for(%i = 0; %i < $maxTurretEmitters; %i++)
 			{
 				if(isObject(%o = %pl.powerParticle[%i]))

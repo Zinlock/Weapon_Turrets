@@ -18,13 +18,16 @@ function fxDtsBrick::turretMountImage(%brk, %name, %force)
 		%brk.vehicle.turretMountImage(%name, %force);
 }
 
+datablock StaticShapeData(EmptyStaticShape)
+{
+	shapeFile = "base/data/shapes/empty.dts";
+};
+
 registerOutputEvent("Bot", "turretMountImage", "string 200 200" TAB "bool", false);
 registerOutputEvent("Bot", "turretPowerLink", "string 200 200", false);
 
 registerOutputEvent("Bot", "turretTurn", "int -180 180 0", false);
-
-// function Player::turretPowerLink() { }
-// function Player::turretMountImage() { }
+registerOutputEvent("Bot", "turretWallMount", "list Ground 0 Wall 1 Ceiling 2", false);
 
 function AIPlayer::turretPowerLink(%pl, %name)
 {
@@ -94,8 +97,46 @@ function AIPlayer::turretMountImage(%pl, %name, %force)
 	}
 }
 
+function AIPlayer::turretWallMount(%pl, %mode)
+{
+	%db = %pl.getDataBlock();
+
+	if(!%db.isTurretArmor)
+		return;
+
+	     if(%mode == 0) %dir = vectorScale(%pl.getUpVector(), -1); // ground
+	else if(%mode == 1) %dir = %pl.getForwardVector();             // wall
+	else if(%mode == 2) %dir = %pl.getUpVector();                  // ceiling
+	
+	%pos = %pl.getHackPosition();
+	%end = vectorAdd(%pos, vectorScale(%dir, 4));
+
+	%ray = containerRayCast(%pos, %end, $TypeMasks::fxBrickObjectType | $TypeMasks::StaticShapeObjectType | $TypeMasks::TerrainObjectType | $TypeMasks::InteriorObjectType);
+	if(isObject(%ray))
+	{
+		%rPos = posFromRaycast(%ray);
+		%norm = normalFromRaycast(%ray);
+
+		%obj = new StaticShape(wm)
+		{
+			dataBlock = EmptyStaticShape;
+			position = %rPos;
+			rotation = Normal2Rotation(%norm);
+			sourceObject = %pl;
+		};
+
+		%obj.mountObject(%pl, 0);
+		%pl.wallMount = %obj;
+	}
+}
+
 function AIPlayer::turretTurn(%pl, %amt)
 {
+	%db = %pl.getDataBlock();
+
+	if(!%db.isTurretArmor)
+		return;
+
 	%rad = mDegToRad(%amt);
 
 	%xform = %pl.getTransform();
