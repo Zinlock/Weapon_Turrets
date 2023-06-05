@@ -658,16 +658,7 @@ function AIPlayer::setAimPointHack(%pl, %point)
 		%mount = %pl.getObjectMount();
 		%pos = %pl.getPosition();
 
-		// %dist = vectorDist(%pos, %mount.getPosition());
-		// %ang = mRadToDeg(mAcos(vectorDot(%mount.getUpVector(), "0 0 1")));
-
-		// talk(%ang);
-		// talk((%ang / 180) * %dist * vectorDist(%pos, %point));
-		// talk((%ang / 180) * %dist * 2);
-
-		// %point = vectorAdd(%point, vectorScale("0 0 1", (%ang / 180) * %dist * 2));
-
-		%xform = MatrixInverse(%mount.getTransform());
+		%xform = MatrixInverse(%pos SPC getWords(%mount.getTransform(), 3, 6));
 		%mtx = MatrixMultiply(%xform, %point @ "0 0 1 0");
 		%npos = vectorAdd(%pos, %mtx);
 

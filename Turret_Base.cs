@@ -315,7 +315,7 @@ function Turret_TribalBaseArms::tbIdleReset(%db, %pl)
 {
 	%pl.stopAudio(1);
 	%pl.playThread(0, idle);
-	%pl.setAimPointHack(vectorAdd(vectorAdd(%pl.getEyePoint(), vectorScale(%pl.turretBase.getForwardVector(), 10)), vectorScale(%pl.turretBase.getUpVector(), -3)));
+	%pl.setAimPointHack(vectorAdd(%pl.getEyePoint(), vectorScale(%pl.turretBase.getForwardVector(), 10)));
 	%pl.tbi1 = %pl.schedule(650, setTransform, "0 0 0 0 0 1 0");
 	%pl.turretBase.playAudio(3, %pl.turretBase.getDataBlock().idleSound);
 	%pl.turretBase.playThread(1, close);
