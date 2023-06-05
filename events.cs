@@ -98,10 +98,11 @@ function InteriorInstance::interiorPowerLoop(%obj, %silent)
 			if(isObject(%obj.powerSound))
 				%obj.powerSound.setTransform("0 0 -8192");
 
-			serverPlay3D(Base_PowerOffSound, %pos);
-		}
+			if(!%silent)
+				serverPlay3D(Base_PowerOffSound, %pos);
 
-		%obj.isPowered = false;
+			%obj.isPowered = false;
+		}
 	}
 	else
 	{
@@ -112,10 +113,11 @@ function InteriorInstance::interiorPowerLoop(%obj, %silent)
 			if(isObject(%obj.powerSound))
 				%obj.powerSound.setTransform(%pos);
 
-			serverPlay3D(Base_PowerOnSound, %pos);
+			if(!%silent)
+				serverPlay3D(Base_PowerOnSound, %pos);
+
+			%obj.isPowered = true;
 		}
-		
-		%obj.isPowered = true;
 	}
 
 	%obj.powerLoop = %obj.schedule(500, interiorPowerLoop, %silent);
