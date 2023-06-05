@@ -17,6 +17,15 @@ datablock PlayerData(Turret_TribalBaseGenerator : PlayerStandardArmor)
 	TurretLookTime = 200;
 	TurretThinkTime = 200;
 	
+	rechargeRate = 5 / 31.25;
+	maxEnergy = 100;
+	energyShield = 1.0;
+	energyShape = Turret_EnergyShieldShape;
+	energyScale = 1.5;
+	energyDelay = 2;
+	energySound = Turret_ShieldDamagedSound;
+	energyBreakSound = Turret_ShieldDestroyedSound;
+	
 	powerLostEmitter[0] = Turret_TribalNoPowerEmitter;
 	powerLostEmitter[1] = Turret_TribalNoPowerEmitter2;
 
