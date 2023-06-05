@@ -1,3 +1,24 @@
+datablock AudioProfile(Base_PowerOnSound)
+{
+	fileName = "./wav/base_power_on.wav";
+	description = AudioDefault3D;
+	preload = true;
+};
+
+datablock AudioProfile(Base_PowerOffSound)
+{
+	fileName = "./wav/base_power_off.wav";
+	description = AudioDefault3D;
+	preload = true;
+};
+
+datablock AudioProfile(Base_PowerLoopSound)
+{
+	fileName = "./wav/base_power_loop.wav";
+	description = AudioDefault3D;
+	preload = true;
+};
+
 datablock AudioProfile(Turret_GeneratorDestroyedSound)
 {
 	fileName = "./wav/base_generator_destroy.wav";

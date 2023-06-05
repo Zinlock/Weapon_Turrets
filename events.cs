@@ -11,11 +11,114 @@ function turretRegisterInputs(%type)
 turretRegisterInputs("Station");
 
 registerOutputEvent("fxDtsBrick", "turretMountImage", "string 200 200" TAB "bool", false);
+registerOutputEvent("fxDtsBrick", "interiorPowerLinkNearest", "string 200 200" TAB "bool", false);
 
 function fxDtsBrick::turretMountImage(%brk, %name, %force)
 {
 	if(isObject(%brk.vehicle) && %brk.vehicle.getDataBlock().isTurretArmor)
 		%brk.vehicle.turretMountImage(%name, %force);
+}
+
+function fxDtsBrick::interiorPowerLinkNearest(%brk, %name, %silent)
+{
+	%obj = containerRayCast(%brk.getPosition(), vectorAdd(%brk.getPosition(), "0 0 -8"), $TypeMasks::InteriorObjectType);
+
+	if(!isObject(%obj))
+		return;
+	
+	if(isObject(%grp = %obj.powerGroup))
+	{
+		%grp.remove(%obj);
+		cancel(%obj.powerLoop);
+	}
+	
+	if(trim(%name) !$= "")
+	{
+		%grp = getPowerGroup(%name);
+		%grp.add(%obj);
+		%obj.interiorPowerLoop(%silent);
+	}
+}
+
+function InteriorInstance::interiorPowerLoop(%obj, %silent)
+{
+	cancel(%obj.powerLoop);
+
+	if(!isObject(%grp = %obj.powerGroup))
+	{
+		%obj.setAlarmMode("off");
+		return;
+	}
+
+	%pos = %obj.getWorldBoxCenter();
+
+	if(!%silent)
+	{
+		if(!isObject(%ps = %obj.powerSound))
+		{
+			%ps = new AudioEmitter()
+			{
+				position = %pos;
+				rotation = "1 0 0 0";
+				scale = "1 1 1";
+				profile = Base_PowerLoopSound;
+				useProfileDescription = false;
+				type = 2;
+				volume = 0.75;
+				outsideAmbient = false;
+				ReferenceDistance = 50;
+				maxDistance = 100;
+				isLooping = true;
+				loopCount = -1;
+				minLoopGap = 0;
+				maxLoopGap = 0;
+				enableVisualFeedback = false;
+				is3D = true;
+				coneInsideAngle = 360;
+				coneOutsideAngle = 360;
+				coneOutsideVolume = 0.25;
+				coneVector = "0 1 0";
+			};
+			%ps.cleanup = %ps.schedule(1000, delete);
+			%obj.powerSound = %ps;
+		}
+		else
+		{
+			cancel(%ps.cleanup);
+			%ps.cleanup = %ps.schedule(1000, delete);
+		}
+	}
+
+	if(%grp.getPower() <= 0)
+	{
+		%obj.setAlarmMode("on");
+
+		if(%obj.isPowered)
+		{
+			if(isObject(%obj.powerSound))
+				%obj.powerSound.setTransform("0 0 -8192");
+
+			serverPlay3D(Base_PowerOffSound, %pos);
+		}
+
+		%obj.isPowered = false;
+	}
+	else
+	{
+		%obj.setAlarmMode("off");
+		
+		if(!%obj.isPowered)
+		{
+			if(isObject(%obj.powerSound))
+				%obj.powerSound.setTransform(%pos);
+
+			serverPlay3D(Base_PowerOnSound, %pos);
+		}
+		
+		%obj.isPowered = true;
+	}
+
+	%obj.powerLoop = %obj.schedule(500, interiorPowerLoop, %silent);
 }
 
 datablock StaticShapeData(EmptyStaticShape)

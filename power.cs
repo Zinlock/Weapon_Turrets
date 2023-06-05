@@ -64,9 +64,10 @@ function PowerGroup::add(%grp, %obj)
 	if(!isObject(%obj))
 		return 0;
 
-	%db = %obj.getDataBlock();
+	if(isFunction(%obj.getClassName(), getDatablock))
+		%db = %obj.getDataBlock();
 
-	if(!%db.isTurretArmor || %grp.isMember(%obj) || %grp.isGenerator(%obj))
+	if(%grp.isMember(%obj) || %grp.isGenerator(%obj))
 		return 0;
 	
 	if(isObject(%obj.powerGroup))
@@ -96,11 +97,6 @@ function PowerGroup::remove(%grp, %obj)
 	if(!isObject(%obj))
 		return 0;
 
-	%db = %obj.getDataBlock();
-
-	if(!%db.isTurretArmor)
-		return 0;
-	
 	if(%grp.isMember(%obj))
 	{
 		%grp.members.remove(%obj);
