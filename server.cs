@@ -27,6 +27,7 @@ exec("./Turret_Base.cs");
 exec("./Turret_Deployable.cs");
 exec("./Turret_Barrels.cs");
 exec("./Weapon_TurretPulse.cs");
+exec("./Turret_Sentry.cs");
 exec("./Weapon_TurretPlasma.cs");
 exec("./Weapon_TurretVulcan.cs");
 
