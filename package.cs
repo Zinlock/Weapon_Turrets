@@ -90,7 +90,10 @@ package TurretPackMain
 		if(isObject(%pl))
 		{
 			if(%db.isTurretHead)
+			{
+				%pl.isPowered = true;
 				%pl.schedule(200, onTurretIdleTick);
+			}
 			
 			if(%db.defaultScale !$= "")
 				%pl.schedule(0, setScale, %db.defaultScale);
