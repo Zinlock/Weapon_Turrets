@@ -123,9 +123,9 @@ function InteriorInstance::interiorPowerLoop(%obj, %silent)
 	%obj.powerLoop = %obj.schedule(500, interiorPowerLoop, %silent);
 }
 
-datablock StaticShapeData(EmptyStaticShape)
+datablock StaticShapeData(WallMountStaticShape)
 {
-	shapeFile = "base/data/shapes/empty.dts";
+	shapeFile = "./dts/wallMount.dts";
 };
 
 registerOutputEvent("Bot", "turretMountImage", "string 200 200" TAB "bool", false);
@@ -224,14 +224,18 @@ function AIPlayer::turretWallMount(%pl, %mode)
 
 		%obj = new StaticShape(wm)
 		{
-			dataBlock = EmptyStaticShape;
+			dataBlock = WallMountStaticShape;
 			position = %rPos;
 			rotation = Normal2Rotation(%norm);
 			sourceObject = %pl;
 		};
 
-		%obj.mountObject(%pl, 0);
+		%pl.setTransform(%obj.getTransform());
+
+		%obj.schedule(100, mountObject, %pl, 0);
 		%pl.wallMount = %obj;
+
+		%obj.schedule(0, hideNode, "ALL");
 	}
 }
 
