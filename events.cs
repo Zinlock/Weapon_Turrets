@@ -230,33 +230,13 @@ function AIPlayer::turretWallMount(%pl, %mode)
 			sourceObject = %pl;
 		};
 
-		%obj.hideNode("ALL");
+		%pl.setTransform(%obj.getTransform());
 
+		%obj.schedule(100, mountObject, %pl, 0);
 		%pl.wallMount = %obj;
-		%pl.tWallMountHack();
+
+		%obj.schedule(0, hideNode, "ALL");
 	}
-}
-
-function AIPlayer::tWallMountHack(%pl)
-{
-	cancel(%pl.twmh);
-
-	if(!isObject(%pl.wallMount))
-		return;
-	
-	if(%pl.getObjectMount() != %pl.wallMount || getSimTime() - %pl.wmhTime > 30000)
-	{
-		%xform = %pl.getTransform();
-
-		%pl.dismount();
-		%pl.wallMount.schedule(50, mountObject, %pl, 0);
-
-		%pl.schedule(50, setTransform, %pl.getPosition() SPC getWords(%xform, 3, 6));
-
-		%pl.wmhTime = getSimTime();
-	}
-
-	%pl.twmh = %pl.schedule(5000, tWallMountHack);
 }
 
 function AIPlayer::turretTurn(%pl, %amt)
