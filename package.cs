@@ -1,5 +1,5 @@
 $Turret_TargetMask = $TypeMasks::PlayerObjectType | $TypeMasks::VehicleObjectType | $TypeMasks::ItemObjectType | $TypeMasks::ProjectileObjectType;
-$Turret_WallMask = $TypeMasks::fxBrickObjectType | $TypeMasks::VehicleObjectType | $TypeMasks::StaticObjectType | $TypeMasks::InteriorObjectType | $TypeMasks::TerrainObjectType;
+$Turret_WallMask = $TypeMasks::fxBrickObjectType | $TypeMasks::StaticObjectType | $TypeMasks::InteriorObjectType | $TypeMasks::TerrainObjectType;
 
 package TurretPackMain
 {
