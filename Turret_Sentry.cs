@@ -246,6 +246,8 @@ datablock PlayerData(Turret_TribalSentryStand : Turret_TribalBaseStand)
 {
 	defaultScale = "1 1 1";
 	TurretHeadData = Turret_TribalSentryArms;
+
+	idleSound = "";
 	
 	rechargeRate = 10 / 31.25;
 	maxEnergy = 75;
