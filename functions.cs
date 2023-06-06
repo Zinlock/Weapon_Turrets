@@ -229,6 +229,9 @@ function Armor::turretOnDestroyed(%db, %pl, %src)
 			%pl.destroyedParticle[%i] = %node;
 		}
 	}
+
+	if(isObject(%pl.wallMount))
+		%pl.wallMount.mountObject(%pl, 0);
 }
 
 function Armor::turretOnDisabled(%db, %pl, %src)
