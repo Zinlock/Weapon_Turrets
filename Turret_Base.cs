@@ -1,3 +1,6 @@
+if(!isFunction(ShapeBase, onDriverLeave))
+	eval("function ShapeBase::onDriverLeave(%db, %pl, %col) { }");
+
 datablock AudioProfile(Turret_TribalDestroyedSound)
 {
 	fileName = "./wav/base_turret_destroy.wav";
