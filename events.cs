@@ -21,7 +21,7 @@ function fxDtsBrick::turretMountImage(%brk, %name, %force)
 
 function fxDtsBrick::interiorPowerLinkNearest(%brk, %name, %silent)
 {
-	%obj = containerRayCast(%brk.getPosition(), vectorAdd(%brk.getPosition(), "0 0 -8"), $TypeMasks::InteriorObjectType);
+	%obj = containerRayCast(vectorAdd(%brk.getPosition(), "0 0 32"), vectorAdd(%brk.getPosition(), "0 0 -32"), $TypeMasks::InteriorObjectType);
 
 	if(!isObject(%obj))
 		return;
