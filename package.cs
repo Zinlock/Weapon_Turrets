@@ -145,7 +145,7 @@ package TurretPackMain
 	{
 		if(%db.isTurretArmor)
 		{
-			if(!%pl.takeSelfDmg && (%src == %pl || %src.sourceObject == %pl) || %src.getDataBlock().isTurretArmor || %src.sourceObject.getDataBlock().isTurretArmor)
+			if(!%pl.takeSelfDmg && (%src == %pl || %src.sourceObject == %pl) || (isObject(%src) && %src.getDataBlock().isTurretArmor) || (isObject(%src.sourceObject) && %src.sourceObject.getDataBlock().isTurretArmor))
 				return;
 
 			%dmg *= getWord(%pl.getScale(), 2);
