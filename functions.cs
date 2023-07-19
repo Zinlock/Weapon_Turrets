@@ -655,7 +655,7 @@ function MatrixInverse(%m) // by Val
 function AIPlayer::setAimPointHack(%pl, %point)
 {
 	if(!%pl.isMounted())
-		%pl.setAimLocation(%pos);
+		%pl.setAimLocation(%point);
 	else
 	{
 		%mount = %pl.getObjectMount();
