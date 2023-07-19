@@ -6,12 +6,32 @@ function turretRegisterInputs(%type)
 	registerInputEvent("fxDtsBrick", "on" @ %type @ "Destroyed", %t);
 	registerInputEvent("fxDtsBrick", "on" @ %type @ "Recovered", %t);
 	registerInputEvent("fxDtsBrick", "on" @ %type @ "Repaired",  %t);
+	
+	$InputDescription_["on" @ %type @ "Spawn"] = "Triggered when a " @ %type @ " spawns on this brick.";
+	$InputDescription_["on" @ %type @ "Disabled"] = "Triggered when this brick's " @ %type @ " is disabled." NL
+	                                                "This event will not be called if the " @ %type @ " is damaged enough to instantly destroy it.";
+	$InputDescription_["on" @ %type @ "Destroyed"] = "Triggered when this brick's " @ %type @ " is destroyed.";
+	$InputDescription_["on" @ %type @ "Recovered"] = "Triggered when this brick's " @ %type @ " is partially repaired, but still disabled.";
+	$InputDescription_["on" @ %type @ "Repaired"] = "Triggered when this brick's " @ %type @ " is repaired and functional.";
+	
+	$ClassDescription_[%type] = "Calls the event on this brick's attached " @ %type @ ".";
 }
 
 turretRegisterInputs("Station");
 
 registerOutputEvent("fxDtsBrick", "turretMountImage", "string 200 200" TAB "bool", false);
 registerOutputEvent("fxDtsBrick", "interiorPowerLinkNearest", "string 200 200" TAB "bool", false);
+
+$OutputDescription_["fxDtsBrick", "turretMountImage"] = "[name] [force]" NL
+                                                        "Mounts a barrel to this brick's attached turret." NL
+                                                        "name: Name of the barrel type to equip" NL
+                                                        "force: Forces the barrel to be equipped even if this turret can't normally accept new barrels";
+
+$OutputDescription_["fxDtsBrick", "interiorPowerLinkNearest"] = "[name] [silent]" NL
+                                                                "Links the nearest interior (above or below this brick) to a specific power group." NL
+                                                                "Toggles the interior's \"alarm mode\" when power is lost." NL
+                                                                "name: Name of the power group to link to" NL
+                                                                "silent: Disables base power ambient sound";
 
 function fxDtsBrick::turretMountImage(%brk, %name, %force)
 {
@@ -133,6 +153,17 @@ registerOutputEvent("Bot", "turretPowerLink", "string 200 200", false);
 
 registerOutputEvent("Bot", "turretTurn", "int -180 180 0", false);
 registerOutputEvent("Bot", "turretWallMount", "list Ground 0 Wall 1 Ceiling 2", false);
+
+$OutputDescription_["Bot", "turretMountImage"] = "[name] [force]" NL
+                                                "Mounts a barrel to this turret." NL
+                                                "name: Name of the barrel type to equip" NL
+                                                "force: Forces the barrel to be equipped even if this turret can't normally accept new barrels";
+
+$OutputDescription_["Bot", "turretPowerLink"] = "[name]" NL
+                                                "Link this station to a power group." NL
+																								"If this station is a generator, it will keep all other stations within this group running." NL
+                                                "Otherwise, this station turns off when the group loses power." NL
+                                                "name: Name of the power group to link to";
 
 function AIPlayer::turretPowerLink(%pl, %name)
 {
