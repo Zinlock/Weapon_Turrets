@@ -1,5 +1,5 @@
 $Turret_TargetMask = $TypeMasks::PlayerObjectType | $TypeMasks::VehicleObjectType | $TypeMasks::ItemObjectType | $TypeMasks::ProjectileObjectType;
-$Turret_WallMask = $TypeMasks::fxBrickObjectType | $TypeMasks::StaticObjectType | $TypeMasks::InteriorObjectType | $TypeMasks::TerrainObjectType;
+$Turret_WallMask = $TypeMasks::fxBrickObjectType | $TypeMasks::StaticShapeObjectType | $TypeMasks::InteriorObjectType | $TypeMasks::TerrainObjectType;
 
 package TurretPackMain
 {
@@ -102,12 +102,24 @@ package TurretPackMain
 
 	function Armor::onDisabled(%db, %pl, %state)
 	{
+		if(%db.isTurretArmor)
+		{
+			%pl.lastMount = %pl.getObjectMount();
+			%pl.lastMountNode = %pl.getMountNode();
+		}
+
 		Parent::onDisabled(%db, %pl, %state);
 
 		if(%db.isTurretArmor)
 		{
 			if(isObject(%pl.turretHead))
 				%pl.turretHead.setDamageLevel(%pl.turretHead.getDataBlock().maxDamage);
+			
+			if(isObject(%pl.lastMount))
+			{
+				%pl.lastMount.mountObject(%pl, %pl.lastMountNode);
+				%pl.lastMount = -1;
+			}
 		}
 	}
 
