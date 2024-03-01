@@ -104,13 +104,13 @@ function turretIsFriendly(%pl, %target)
 
 function Armor::turretCanSee(%db, %pl, %target)
 {
-	%pos = %pl.getHackPosition();
+	%pos = %pl.getCenterPos();
 	if(isObject(%target))
 	{
 		if($tlinedebug)
 		{
 			drawLine(%pos, %target.getEyePoint(), "0 1 0 0.5", 0.01).schedule(500,delete);
-			drawLine(%pos, %target.getHackPosition(), "0 1 0 0.5", 0.01).schedule(500,delete);
+			drawLine(%pos, %target.getCenterPos(), "0 1 0 0.5", 0.01).schedule(500,delete);
 			drawLine(%pos, %target.getPosition(), "0 1 0 0.5", 0.01).schedule(500,delete);
 		}
 
@@ -142,7 +142,7 @@ function Armor::turretCanTrigger(%db, %pl, %target)
 	if(%target.getDatablock().isTurretArmor)
 		return 0;
 	
-	if(vectorDist(%pl.getHackPosition(), %target.getCenterPos()) > %db.TurretLookRange || !%db.turretCanSee(%pl, %target) || %pl.getDamagePercent() >= 1.0 || %target.getDamagePercent() >= 1.0)
+	if(vectorDist(%pl.getCenterPos(), %target.getCenterPos()) > %db.TurretLookRange || !%db.turretCanSee(%pl, %target) || %pl.getDamagePercent() >= 1.0 || %target.getDamagePercent() >= 1.0)
 		return 0;
 	
 	%img = %pl.getMountedImage(0);
@@ -193,7 +193,7 @@ function Armor::turretOnDestroyed(%db, %pl, %src)
 				%p = new Projectile()
 				{
 					dataBlock = %db.destroyedExplosion;
-					initialPosition = %pl.getHackPosition();
+					initialPosition = %pl.getCenterPos();
 					initialVelocity = "0 0 1";
 				};
 
@@ -201,7 +201,7 @@ function Armor::turretOnDestroyed(%db, %pl, %src)
 			}
 
 		if(isObject(%db.destroyedSound))
-			serverPlay3D(%db.destroyedSound, %pl.getHackPosition());
+			serverPlay3D(%db.destroyedSound, %pl.getCenterPos());
 	}
 
 	for(%i = 0; %i < $maxTurretEmitters; %i++)
@@ -222,7 +222,7 @@ function Armor::turretOnDestroyed(%db, %pl, %src)
 				datablock = GenericEmitterNode;
 				emitter = %db.destroyedEmitter[%i];
 				scale = "0 0 0";
-				position = %pl.getHackPosition();
+				position = %pl.getCenterPos();
 			};
 
 			%node.setColor("1.0 1.0 1.0 1.0");
@@ -262,7 +262,7 @@ function Armor::turretOnDisabled(%db, %pl, %src)
 				datablock = GenericEmitterNode;
 				emitter = %db.disabledEmitter[%i];
 				scale = "0 0 0";
-				position = %pl.getHackPosition();
+				position = %pl.getCenterPos();
 			};
 			
 			%node.setColor("1.0 1.0 1.0 1.0");
@@ -297,7 +297,7 @@ function Armor::turretOnRecovered(%db, %pl, %src)
 				datablock = GenericEmitterNode;
 				emitter = %db.disabledEmitter[%i];
 				scale = "0 0 0";
-				position = %pl.getHackPosition();
+				position = %pl.getCenterPos();
 			};
 			
 			%node.setColor("1.0 1.0 1.0 1.0");
@@ -349,7 +349,7 @@ function Armor::turretOnRepaired(%db, %pl, %src)
 					datablock = GenericEmitterNode;
 					emitter = %db.powerLostEmitter[%i];
 					scale = "0 0 0";
-					position = %pl.getHackPosition();
+					position = %pl.getCenterPos();
 				};
 
 				%node.setColor("1.0 1.0 1.0 1.0");
@@ -382,7 +382,7 @@ function Armor::turretOnPowerLost(%db, %pl)
 					datablock = GenericEmitterNode;
 					emitter = %bdb.powerLostEmitter[%i];
 					scale = "0 0 0";
-					position = %base.getHackPosition();
+					position = %base.getCenterPos();
 				};
 
 				%node.setColor("1.0 1.0 1.0 1.0");
@@ -681,7 +681,7 @@ function AIPlayer::turretLook(%pl, %radius, %mask)
 
 	%dist = %radius * 2;
 	%found = -1;
-	%pos = %pl.getHackPosition();
+	%pos = %pl.getCenterPos();
 	initContainerRadiusSearch(%pos, %radius, %mask);
 	while(isObject(%col = containerSearchNext()))
 	{
@@ -731,7 +731,8 @@ function Player::getLookVector(%pl)
 function ShapeBase::getCenterPos(%obj)
 {
 	if(%obj.getType() & $TypeMasks::PlayerObjectType)
-		return %obj.getHackPosition();
+		return vectorScale(vectorAdd(%obj.getWorldBoxCenter(), vectorScale(%obj.getPosition(), 3)), 0.25);
+		// return %obj.getHackPosition();
 	else
 		return vectorScale(vectorAdd(%obj.getWorldBoxCenter(), %obj.getPosition()), 0.5);
 }
@@ -739,7 +740,8 @@ function ShapeBase::getCenterPos(%obj)
 function ShapeBase::getHigherPos(%obj)
 {
 	if(%obj.getType() & $TypeMasks::PlayerObjectType)
-		return %obj.getEyePoint();
+		return vectorScale(vectorAdd(%obj.getWorldBoxCenter(), %obj.getPosition()), 0.5);
+		// return %obj.getEyePoint();
 	else
 		return %obj.getWorldBoxCenter();
 }
