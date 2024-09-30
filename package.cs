@@ -1,4 +1,4 @@
-$Turret_TargetMask = $TypeMasks::PlayerObjectType | $TypeMasks::VehicleObjectType | $TypeMasks::ItemObjectType | $TypeMasks::ProjectileObjectType;
+$Turret_TargetMask = $TypeMasks::PlayerObjectType | $TypeMasks::VehicleObjectType;
 $Turret_WallMask = $TypeMasks::fxBrickObjectType | $TypeMasks::StaticShapeObjectType | $TypeMasks::InteriorObjectType | $TypeMasks::TerrainObjectType;
 
 package TurretPackMain
@@ -93,6 +93,11 @@ package TurretPackMain
 			{
 				%pl.isPowered = true;
 				%pl.schedule(200, onTurretIdleTick);
+
+				if(!isObject(GlobalTurretSet))
+					new SimSet(GlobalTurretSet);
+
+				GlobalTurretSet.add(%pl);
 			}
 			
 			if(%db.defaultScale !$= "")
@@ -157,7 +162,7 @@ package TurretPackMain
 	{
 		if(%db.isTurretArmor)
 		{
-			if(!%pl.takeSelfDmg)
+			if(!%pl.takeSelfDmg && !isObject(%pl.getControllingClient()))
 			{
 				if((%src == %pl || %src.sourceObject == %pl) || (isObject(%src) && %src.getDataBlock().isTurretArmor) || (isObject(%src.sourceObject) && %src.sourceObject.getDataBlock().isTurretArmor))
 					return;

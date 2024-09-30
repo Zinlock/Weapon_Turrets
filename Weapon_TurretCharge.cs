@@ -55,7 +55,7 @@ datablock ShapeBaseImageData(Turret_TribalChargeImage : Turret_TribalPulseImage)
 
 	triggerTime = 400;
 	triggerQuickTime = 200;
-	triggerDist = 48;
+	triggerDist = 128;
 	triggerWalk = true;
 	triggerWalkTime = 0;
 	triggerJet = true;
@@ -65,10 +65,10 @@ datablock ShapeBaseImageData(Turret_TribalChargeImage : Turret_TribalPulseImage)
 	triggerTeam = false;
 	triggerHeal = false;
 
-	elfRange = 32;
+	elfRange = 128;
 	elfAngle = 30;
-	elfDrain = 3.0;
-	elfDamage = 2.0;
+	elfDrain = 4.0;
+	elfDamage = 0.25;
 
 	stateName[0] = "activate";
 	stateSequence[0] = "activate";

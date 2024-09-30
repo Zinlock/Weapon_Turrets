@@ -42,5 +42,9 @@ if($AddOn__Weapon_TribalWar && isFile("Add-Ons/Weapon_TribalWar/server.cs")) // 
 	// exec("./Weapon_TurretCluster.cs"); // todo
 }
 
+exec("./Station_Inventory.cs");
+exec("./Station_Sensor_Large.cs");
+exec("./Station_Sensor_Medium.cs");
+
 exec("./Power_Generator.cs");
 exec("./Power_Panel.cs");

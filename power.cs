@@ -40,20 +40,23 @@ function newPowerGroup(%name)
 
 function PowerGroup::validate(%grp)
 {
-	%cts = %grp.getGenerators();
+	%gens = %grp.generators;
+	%cts = %gens.getCount();
 	for(%i = 0; %i < %cts; %i++)
 	{
-		%gen = %grp.getGenerator(%i);
-		
+		%gen = %gens.getObject(%i);
+
 		if(%gen.powerGroup != %grp)
 			%grp.remove(%gen);
 	}
 
-	%cts = %grp.getMembers();
+	%mems = %grp.members;
+
+	%cts = %mems.getCount();
 	for(%i = 0; %i < %cts; %i++)
 	{
-		%mem = %grp.getMember(%i);
-		
+		%mem = %mems.getObject(%i);
+
 		if(%mem.powerGroup != %grp)
 			%grp.remove(%mem);
 	}
@@ -113,52 +116,24 @@ function PowerGroup::remove(%grp, %obj)
 		return 0;
 }
 
-function PowerGroup::getGenerators(%grp)
-{
-	return %grp.generators.getCount();
-}
-
-function PowerGroup::getGenerator(%grp, %idx)
-{
-	if(%idx >= %grp.generators.getCount())
-	{
-		error("PowerGroup::getGenerator() - index out of range (" @ %idx @ " > " @ %grp.generators.getCount() @ ")");
-		return -1;
-	}
-
-	return %grp.generators.getObject(%idx);
-}
-
 function PowerGroup::isGenerator(%grp, %obj)
 {
 	if(!isObject(%obj))
 		return 0;
-	
-	%cts = %grp.getGenerators();
-	for(%i = 0; %i < %cts; %i++)
-	{
-		%gen = %grp.getGenerator(%i);
-		if(%gen.getId() == %obj.getId())
-			return true;
-	}
 
-	return false;
-}
+	return %grp.generators.isMember(%obj);
 
-function PowerGroup::getMembers(%grp)
-{
-	return %grp.members.getCount();
-}
+	// %gens = %grp.generators;
 
-function PowerGroup::getMember(%grp, %idx)
-{
-	if(%idx >= %grp.members.getCount())
-	{
-		error("PowerGroup::getMember() - index out of range (" @ %idx @ " > " @ %grp.members.getCount() @ ")");
-		return -1;
-	}
+	// %cts = %gens.getCount();
+	// for(%i = 0; %i < %cts; %i++)
+	// {
+	// 	%gen = %gens.getObject(%idx);
+	// 	if(%gen.getId() == %obj.getId())
+	// 		return true;
+	// }
 
-	return %grp.members.getObject(%idx);
+	// return false;
 }
 
 function PowerGroup::isMember(%grp, %obj)
@@ -166,15 +141,19 @@ function PowerGroup::isMember(%grp, %obj)
 	if(!isObject(%obj))
 		return 0;
 	
-	%cts = %grp.getMembers();
-	for(%i = 0; %i < %cts; %i++)
-	{
-		%mem = %grp.getMember(%i);
-		if(%mem.getId() == %obj.getId())
-			return true;
-	}
+	return %grp.members.isMember(%obj);
 
-	return false;
+	// %mems = %grp.members;
+
+	// %cts = %mems.getCount();
+	// for(%i = 0; %i < %cts; %i++)
+	// {
+	// 	%mem = %mems.getObject(%i);
+	// 	if(%mem.getId() == %obj.getId())
+	// 		return true;
+	// }
+
+	// return false;
 }
 
 function PowerGroup::isPowered(%grp, %obj)
@@ -186,10 +165,10 @@ function PowerGroup::getPower(%grp)
 {
 	%power = 0;
 
-	%cts = %grp.getGenerators();
+	%cts = %grp.generators.getCount();
 	for(%i = 0; %i < %cts; %i++)
 	{
-		%gen = %grp.getGenerator(%i);
+		%gen = %grp.generators.getObject(%i);
 		%db = %gen.getDataBlock();
 
 		if(!%gen.isDisabled && !%gen.isDestroyed && !%gen.isJammed)

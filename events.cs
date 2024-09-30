@@ -308,6 +308,7 @@ function fxDtsBrick::onTurret(%brk, %pl, %src, %evt)
 
 	%evt = "onStation" @ %evt;
 
+	$inputTarget_Self = %brk;
 	$inputTarget_Station = %pl;
 	$inputTarget_SourcePlayer = (%class $= "Player" ? %src : (%class $= "GameConnection" ? %src.player : %src.sourceObject));
 	$inputTarget_SourceClient = %scl = (%class $= "GameConnection" ? %src : %src.client);

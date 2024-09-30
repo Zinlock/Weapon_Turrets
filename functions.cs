@@ -1,6 +1,30 @@
 $maxTurretEmitters = 4;
 
-// datablock functions //
+function turretTickLoop()
+{
+	cancel($ttl);
+
+	if(!isObject(GlobalTurretSet))
+		new SimSet(GlobalTurretSet);
+
+	%cts = GlobalTurretSet.getCount();
+	for(%i = 0; %i < %cts; %i++)
+	{
+		%obj = GlobalTurretSet.getObject(%i);
+		%db = %obj.getDataBlock();
+
+		if(!isObject(%obj.target) && getSimTime() - %obj.lastIdleTick >= %db.TurretThinkTime)
+		{
+			%db.turretOnIdleTick(%obj);
+			%obj.lastIdleTick = getSimTime();
+		}
+	}
+
+	$ttl = schedule(150, 0, turretTickLoop);
+}
+
+cancel($ttl);
+$ttl = schedule(0, 0, turretTickLoop);
 
 function turretIsFriendly(%pl, %target)
 {
@@ -39,7 +63,7 @@ function turretIsFriendly(%pl, %target)
 				%targ = %target.client;
 			else
 				%targ = %target.getControllingClient();
-			
+
 			if(isObject(%targ))
 			{
 				%dm = %pl.sourceClient.slyrTeam.isAlliedTeam(%targ.slyrTeam);
@@ -102,36 +126,24 @@ function turretIsFriendly(%pl, %target)
 	return 0;
 }
 
+// datablock functions //
+
 function Armor::turretCanSee(%db, %pl, %target)
 {
-	%pos = %pl.getCenterPos();
+	%pos = %pl.getHackPosition();
 	if(isObject(%target))
 	{
-		if($tlinedebug)
-		{
-			drawLine(%pos, %target.getEyePoint(), "0 1 0 0.5", 0.01).schedule(500,delete);
-			drawLine(%pos, %target.getCenterPos(), "0 1 0 0.5", 0.01).schedule(500,delete);
-			drawLine(%pos, %target.getPosition(), "0 1 0 0.5", 0.01).schedule(500,delete);
-		}
+		if(%target.getType() & $TypeMasks::PlayerObjectType)
+			%tpos = %target.getHackPosition();
+		else
+			%tpos = %target.getPosition();
 
-		//try the head first
-		%ray = containerRayCast(%pos, %target.getHigherPos(), $Turret_WallMask, %pl, %target);
+		if($tlinedebug)
+			drawLine(%pos, %tpos, "0 1 0 0.5", 0.01).schedule(500,delete);
+
+		%ray = containerRayCast(%pos, %tpos, $Turret_WallMask);
 		if(!isObject(%ray))
 			return 1;
-		else
-		{
-			//try the chest then
-			%ray = containerRayCast(%pos, %target.getCenterPos(), $Turret_WallMask, %pl, %target);
-			if(!isObject(%ray))
-				return 1;
-			else
-			{
-				//try the feet then
-				%ray = containerRayCast(%pos, %target.getPosition(), $Turret_WallMask, %pl, %target);
-				if(!isObject(%ray))
-					return 1;
-			}
-		}
 	}
 
 	return 0;
@@ -141,16 +153,23 @@ function Armor::turretCanTrigger(%db, %pl, %target)
 {
 	if(%target.getDatablock().isTurretArmor)
 		return 0;
-	
-	if(vectorDist(%pl.getCenterPos(), %target.getCenterPos()) > %db.TurretLookRange || !%db.turretCanSee(%pl, %target) || %pl.getDamagePercent() >= 1.0 || %target.getDamagePercent() >= 1.0)
-		return 0;
-	
+
 	%img = %pl.getMountedImage(0);
 	if(!isObject(%img))
 		return 0;
-	
+
 	%team = turretIsFriendly(%pl, %target);
 	if(%team == -1 || %team == 0 && %img.triggerTeam || %team == 1 && !%img.triggerTeam)
+		return 0;
+
+	if(%target.getType() & $TypeMasks::PlayerObjectType)
+		%tpos = %target.getHackPosition();
+	else
+		%tpos = %target.getPosition();
+
+	%pos = %pl.getHackPosition();
+
+	if(vectorDist(%pos, %tpos) > %db.TurretLookRange || isObject(containerRayCast(%pos, %tpos, $Turret_WallMask)) || %pl.getDamagePercent() >= 1.0 || %target.getDamagePercent() >= 1.0)
 		return 0;
 
 	if(!%img.canTrigger(%pl, 0, %target))
@@ -161,22 +180,120 @@ function Armor::turretCanTrigger(%db, %pl, %target)
 
 function Armor::turretOnIdleTick(%db, %pl)
 {
+	%skip = false;
 
+	if(%pl.isJammed || isObject(%grp = %pl.powerGroup))
+	{
+		if(%pl.isJammed || (!%grp.isGenerator(%pl) && !%grp.getPower()))
+		{
+			if(%pl.isPowered)
+			{
+				%pl.isPowered = false;
+				%db.turretOnPowerLost(%pl);
+			}
+			else %db.turretOnNoPowerTick(%pl);
+		}
+		else if(!%pl.isPowered)
+		{
+			%pl.isPowered = true;
+			%pl.wasJammed = false;
+			%db.turretOnPowerRestored(%pl);
+			%skip = true;
+		}
+	}
+	else
+	{
+		%pl.isPowered = true;
+		if(%pl.wasJammed)
+		{
+			%db.turretOnPowerRestored(%pl);
+			%pl.wasJammed = false;
+			%skip = true;
+		}
+	}
+
+	if(%pl.isPowered && !%skip)
+	{
+		if(%db.TurretLookRange > 0 && getSimTime() - %pl.lastSightCheck >= %db.TurretLookTime)
+		{
+			%pl.lastSightCheck = getSimTime();
+
+			%found = -1;
+			%pos = %pl.getCenterPos();
+			initContainerRadiusSearch(%pos, %db.TurretLookRange, %db.TurretLookMask);
+			while(isObject(%col = containerSearchNext()))
+			{
+				if(%col == %pl || %col == %pl.turretHead || %col == %pl.turretBase)
+					continue;
+
+				if(!isObject(%pl.sourceClient) || minigameCanDamage(%pl.sourceClient, %col) == 1)
+				{
+					if(!%db.turretCanTrigger(%pl, %col))
+						continue;
+
+					%cpos = %col.getCenterPos();
+
+					if($tlinedebug)
+						drawLine(%pos, %cpos, "0 1 0 0.5", 0.01).schedule(500,delete);
+
+					%found = %col;
+					break;
+				}
+			}
+
+			if(isObject(%found))
+			{
+				%pl.target = %found;
+				%db.turretOnTargetFound(%pl, %found);
+			}
+		}
+	}
 }
 
 function Armor::turretOnTargetTick(%db, %pl, %target)
 {
-	%pl.getMountedImage(0).onTargetTick(%pl, 0, %target);
+	cancel(%pl.turretTarget);
+
+	if(%pl.isJammed || isObject(%grp = %pl.powerGroup))
+	{
+		if((%pl.isJammed || (!%grp.isGenerator(%pl) && !%grp.getPower())) && %pl.isPowered)
+		{
+			%pl.isPowered = false;
+			%db.turretOnPowerLost(%pl);
+			%db.turretOnTargetLost(%pl);
+			return;
+		}
+	}
+	else %pl.isPowered = true;
+
+	if(isObject(%target) && %db.turretCanTrigger(%pl, %target))
+	{
+		%pl.getMountedImage(0).onTargetTick(%pl, 0, %target);
+		%pl.turretTarget = %db.schedule(%db.TurretThinkTime, turretOnTargetTick, %pl, %target);
+	}
+	else
+		%db.turretOnTargetLost(%pl, %target);
 }
 
 function Armor::turretOnTargetFound(%db, %pl, %target)
 {
+	cancel(%pl.turretTarget);
+
+	%pl.targetFoundTime = getSimTime();
+
 	%pl.getMountedImage(0).onTargetFound(%pl, 0, %target);
+	%pl.turretTarget = %db.schedule(%db.TurretThinkTime, turretOnTargetTick, %pl, %target);
 }
 
 function Armor::turretOnTargetLost(%db, %pl, %target)
 {
+	cancel(%pl.turretTarget);
+	%pl.target = -1;
+
+	%pl.targetLostTime = getSimTime();
+
 	%pl.getMountedImage(0).onTargetLost(%pl, 0, %target);
+	%pl.turretIdle = %db.schedule(%db.TurretThinkTime, turretOnIdleTick, %pl);
 }
 
 function Armor::turretOnDestroyed(%db, %pl, %src)
@@ -193,7 +310,7 @@ function Armor::turretOnDestroyed(%db, %pl, %src)
 				%p = new Projectile()
 				{
 					dataBlock = %db.destroyedExplosion;
-					initialPosition = %pl.getCenterPos();
+					initialPosition = %pl.getHackPosition();
 					initialVelocity = "0 0 1";
 				};
 
@@ -201,7 +318,7 @@ function Armor::turretOnDestroyed(%db, %pl, %src)
 			}
 
 		if(isObject(%db.destroyedSound))
-			serverPlay3D(%db.destroyedSound, %pl.getCenterPos());
+			serverPlay3D(%db.destroyedSound, %pl.getHackPosition());
 	}
 
 	for(%i = 0; %i < $maxTurretEmitters; %i++)
@@ -222,7 +339,7 @@ function Armor::turretOnDestroyed(%db, %pl, %src)
 				datablock = GenericEmitterNode;
 				emitter = %db.destroyedEmitter[%i];
 				scale = "0 0 0";
-				position = %pl.getCenterPos();
+				position = %pl.getHackPosition();
 			};
 
 			%node.setColor("1.0 1.0 1.0 1.0");
@@ -262,7 +379,7 @@ function Armor::turretOnDisabled(%db, %pl, %src)
 				datablock = GenericEmitterNode;
 				emitter = %db.disabledEmitter[%i];
 				scale = "0 0 0";
-				position = %pl.getCenterPos();
+				position = %pl.getHackPosition();
 			};
 			
 			%node.setColor("1.0 1.0 1.0 1.0");
@@ -297,7 +414,7 @@ function Armor::turretOnRecovered(%db, %pl, %src)
 				datablock = GenericEmitterNode;
 				emitter = %db.disabledEmitter[%i];
 				scale = "0 0 0";
-				position = %pl.getCenterPos();
+				position = %pl.getHackPosition();
 			};
 			
 			%node.setColor("1.0 1.0 1.0 1.0");
@@ -349,7 +466,7 @@ function Armor::turretOnRepaired(%db, %pl, %src)
 					datablock = GenericEmitterNode;
 					emitter = %db.powerLostEmitter[%i];
 					scale = "0 0 0";
-					position = %pl.getCenterPos();
+					position = %pl.getHackPosition();
 				};
 
 				%node.setColor("1.0 1.0 1.0 1.0");
@@ -382,7 +499,7 @@ function Armor::turretOnPowerLost(%db, %pl)
 					datablock = GenericEmitterNode;
 					emitter = %bdb.powerLostEmitter[%i];
 					scale = "0 0 0";
-					position = %base.getCenterPos();
+					position = %base.getHackPosition();
 				};
 
 				%node.setColor("1.0 1.0 1.0 1.0");
@@ -434,112 +551,6 @@ function AIPlayer::turretSpawned(%pl)
 function AIPlayer::turretCanMount(%pl, %src, %img)
 {
 	return %pl.getDataBlock().turretCanMount(%pl, %src, %img);
-}
-
-function AIPlayer::onTurretTargetFound(%pl, %target)
-{
-	%db = %pl.getDatablock();
-	cancel(%pl.turretIdle);
-	cancel(%pl.turretTarget);
-
-	%pl.targetFoundTime = getSimTime();
-	
-	%db.turretOnTargetFound(%pl, %target);
-	%pl.turretTarget = %pl.schedule(%db.TurretThinkTime, onTurretTargetTick, %target);
-}
-
-function AIPlayer::onTurretTargetLost(%pl, %target)
-{
-	%db = %pl.getDatablock();
-	cancel(%pl.turretIdle);
-	cancel(%pl.turretTarget);
-
-	%pl.targetLostTime = getSimTime();
-
-	%db.turretOnTargetLost(%pl, %target);
-	%pl.turretIdle = %pl.schedule(%db.TurretThinkTime, onTurretIdleTick);
-}
-
-function AIPlayer::onTurretTargetTick(%pl, %target)
-{
-	%db = %pl.getDatablock();
-	cancel(%pl.turretIdle);
-	cancel(%pl.turretTarget);
-
-	if(%pl.isJammed || isObject(%grp = %pl.powerGroup))
-	{
-		if((%pl.isJammed || (!%grp.isGenerator(%pl) && !%grp.getPower())) && %pl.isPowered)
-		{
-			%pl.isPowered = false;
-			%db.turretOnPowerLost(%pl);
-			%pl.onTurretTargetLost();
-			return;
-		}
-	}
-	else %pl.isPowered = true;
-
-	if(isObject(%target) && %db.turretCanTrigger(%pl, %target))
-	{
-		%db.turretOnTargetTick(%pl, %target);
-		%pl.turretTarget = %pl.schedule(%db.TurretThinkTime, onTurretTargetTick, %target);
-	}
-	else
-		%pl.onTurretTargetLost(%target);
-}
-
-function AIPlayer::onTurretIdleTick(%pl)
-{
-	%db = %pl.getDatablock();
-	cancel(%pl.turretIdle);
-
-	%skip = false;
-
-	if(%pl.isJammed || isObject(%grp = %pl.powerGroup))
-	{
-		if(%pl.isJammed || (!%grp.isGenerator(%pl) && !%grp.getPower()))
-		{
-			if(%pl.isPowered)
-			{
-				%pl.isPowered = false;
-				%db.turretOnPowerLost(%pl);
-			}
-			else %db.turretOnNoPowerTick(%pl);
-		}
-		else if(!%pl.isPowered)
-		{
-			%pl.isPowered = true;
-			%pl.wasJammed = false;
-			%db.turretOnPowerRestored(%pl);
-			%skip = true;
-		}
-	}
-	else
-	{
-		%pl.isPowered = true;
-		if(%pl.wasJammed)
-		{
-			%db.turretOnPowerRestored(%pl);
-			%pl.wasJammed = false;
-			%skip = true;
-		}
-	}
-
-	if(%pl.isPowered && !%skip)
-	{
-		%db.turretOnIdleTick(%pl);
-
-		if(getSimTime() - %pl.lastSightCheck >= %db.TurretLookTime)
-		{
-			%pl.lastSightCheck = getSimTime();
-			%target = %pl.turretLook(%db.TurretLookRange, %db.TurretLookMask);
-			%pl.target = firstWord(%target);
-
-			if(isObject(%target))
-				%pl.onTurretTargetFound(firstWord(%target));
-		}
-	}
-
-	%pl.turretIdle = %pl.schedule(%db.TurretThinkTime, onTurretIdleTick);
 }
 
 function AIPlayer::turretRepair(%pl, %amt, %src)
@@ -685,30 +696,24 @@ function AIPlayer::turretLook(%pl, %radius, %mask)
 	initContainerRadiusSearch(%pos, %radius, %mask);
 	while(isObject(%col = containerSearchNext()))
 	{
-		if(%col == %pl || %col == %pl.turretHead || %col == %pl.turretBase) continue;
+		if(!isObject(%col) || %col == %pl || %col == %pl.turretHead || %col == %pl.turretBase) continue;
 
 		if(!isObject(%pl.sourceClient) || minigameCanDamage(%pl.sourceClient, %col) == 1)
 		{
-			%cpos = %col.getCenterPos();
-			
-			if($tlinedebug)
-				drawLine(%pos, %cpos, "0 1 0 0.5", 0.01).schedule(500,delete);
-			
 			if(!%db.turretCanTrigger(%pl, %col))
 				continue;
-			
+
+			%cpos = %col.getCenterPos();
+
+			if($tlinedebug)
+				drawLine(%pos, %cpos, "0 1 0 0.5", 0.01).schedule(500,delete);
+
 			if((%d2 = vectorDist(%pos, %cpos)) < %dist)
-			{
-				%found = %col;
-				%dist = %d2;
-			}
+				return %col SPC %d2;
 		}
 	}
 
-	if(isObject(%found))
-		return %found SPC %dist;
-	else
-		return -1;
+	return -1;
 }
 
 function Player::getLookVector(%pl)
@@ -730,20 +735,22 @@ function Player::getLookVector(%pl)
 
 function ShapeBase::getCenterPos(%obj)
 {
-	if(%obj.getType() & $TypeMasks::PlayerObjectType)
-		return vectorScale(vectorAdd(%obj.getWorldBoxCenter(), vectorScale(%obj.getPosition(), 3)), 0.25);
-		// return %obj.getHackPosition();
-	else
-		return vectorScale(vectorAdd(%obj.getWorldBoxCenter(), %obj.getPosition()), 0.5);
+	return %obj.getPosition();
+}
+
+function Player::getCenterPos(%pl)
+{
+	return vectorScale(vectorAdd(%pl.getWorldBoxCenter(), vectorScale(%pl.getPosition(), 3)), 0.25);
 }
 
 function ShapeBase::getHigherPos(%obj)
 {
-	if(%obj.getType() & $TypeMasks::PlayerObjectType)
-		return vectorScale(vectorAdd(%obj.getWorldBoxCenter(), %obj.getPosition()), 0.5);
-		// return %obj.getEyePoint();
-	else
-		return %obj.getWorldBoxCenter();
+	return %obj.getWorldBoxCenter();
+}
+
+function Player::getHigherPos(%pl)
+{
+	return %pl.getEyePoint();
 }
 
 function Player::isJetting(%pl)
@@ -807,7 +814,7 @@ function AIPlayer::turretJetLoop(%pl, %targ, %minStart, %minEnd) // this sucks! 
 	}
 
 	%pl.ltj[%targ] = getSimTime();
-	%pl.tjl[%targ] = %pl.schedule(100, turretJetLoop, %targ, %minStart, %minEnd);
+	%pl.tjl[%targ] = %pl.schedule(200, turretJetLoop, %targ, %minStart, %minEnd);
 }
 
 function AIPlayer::turretJetting(%pl, %targ)
