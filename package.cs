@@ -1,6 +1,3 @@
-$Turret_TargetMask = $TypeMasks::PlayerObjectType | $TypeMasks::VehicleObjectType;
-$Turret_WallMask = $TypeMasks::fxBrickObjectType | $TypeMasks::StaticShapeObjectType | $TypeMasks::InteriorObjectType | $TypeMasks::TerrainObjectType;
-
 package TurretPackMain
 {
 	function ae_calculateDamagePosition(%pl, %pos)

@@ -1,3 +1,5 @@
+$Turret_TargetMask = $TypeMasks::PlayerObjectType | $TypeMasks::VehicleObjectType;
+$Turret_WallMask = $TypeMasks::fxBrickObjectType | $TypeMasks::StaticShapeObjectType | $TypeMasks::InteriorObjectType | $TypeMasks::TerrainObjectType | $TypeMasks::VehicleObjectType;
 $maxTurretEmitters = 4;
 
 function turretTickLoop()
@@ -141,7 +143,7 @@ function Armor::turretCanSee(%db, %pl, %target)
 		if($tlinedebug)
 			drawLine(%pos, %tpos, "0 1 0 0.5", 0.01).schedule(500,delete);
 
-		%ray = containerRayCast(%pos, %tpos, $Turret_WallMask);
+		%ray = containerRayCast(%pos, %tpos, $Turret_WallMask, %target);
 		if(!isObject(%ray))
 			return 1;
 	}
@@ -169,7 +171,7 @@ function Armor::turretCanTrigger(%db, %pl, %target)
 
 	%pos = %pl.getHackPosition();
 
-	if(vectorDist(%pos, %tpos) > %db.TurretLookRange || isObject(containerRayCast(%pos, %tpos, $Turret_WallMask)) || %pl.getDamagePercent() >= 1.0 || %target.getDamagePercent() >= 1.0)
+	if(vectorDist(%pos, %tpos) > %db.TurretLookRange || isObject(containerRayCast(%pos, %tpos, $Turret_WallMask, %target)) || %pl.getDamagePercent() >= 1.0 || %target.getDamagePercent() >= 1.0)
 		return 0;
 
 	if(!%img.canTrigger(%pl, 0, %target))
