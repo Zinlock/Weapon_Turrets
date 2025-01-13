@@ -530,6 +530,8 @@ function Armor::turretOnPowerRestored(%db, %pl)
 			if(isObject(%base.powerParticle[%i]))
 				%base.powerParticle[%i].delete();
 		}
+
+		%base.setEnergyLevel(0);
 	}
 }
 
