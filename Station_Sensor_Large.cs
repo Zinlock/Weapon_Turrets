@@ -105,17 +105,15 @@ function Player::twSensorPing(%pl)
 {
 	if(%pl.isSensorPinged)
 		return;
-	
+
+	cancel(%pl.pingCleanup);
+
 	%pl.isSensorPinged = true;
 
 	if(isObject(%cl = %pl.Client) && isObject(%obj = %cl.STB_Beacon))
-	{
-		%obj.scopeAlways = true;
 		%obj.STB_ScopeToTeam(%cl);
 
-		cancel(%pl.pingCleanup);
-		%pl.pingCleanup = %pl.schedule(1000, twSensorUnPing);
-	}
+	%pl.pingCleanup = %pl.schedule(1000, twSensorUnPing);
 }
 
 function Player::twSensorUnPing(%pl)
@@ -123,15 +121,12 @@ function Player::twSensorUnPing(%pl)
 	if(!%pl.isSensorPinged)
 		return;
 
-	%pl.isSensorPinged = false;
-
 	cancel(%pl.pingCleanup);
 
+	%pl.isSensorPinged = false;
+
 	if(isObject(%cl = %pl.client) && isObject(%obj = %cl.STB_Beacon))
-	{
-		%obj.scopeAlways = false;
 		%obj.STB_ScopeToTeam(%cl);
-	}
 }
 
 function Station_SensorLarge::turretOnIdleTick(%db, %pl)
@@ -166,6 +161,14 @@ package TWSensorRadar
 		%obj.alwaysVisibleTo[%cl] = %obj.isSensorPinged;
 		
 		return Parent::MMGCanScope(%cl, %obj);
+	}
+
+	function GameConnection::STB_IsScopeAlways(%cl)
+	{
+		if(%cl.player.isSensorPinged)
+			return true;
+		
+		return Parent::STB_IsScopeAlways(%cl);
 	}
 
 	function Armor::onRemove(%db, %pl)
