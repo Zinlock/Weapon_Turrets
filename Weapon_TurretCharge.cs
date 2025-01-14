@@ -61,8 +61,8 @@ datablock ShapeBaseImageData(Turret_TribalChargeImage : Turret_TribalPulseImage)
 	triggerWalkTime = 0;
 	triggerJet = true;
 	triggerJetTime = 0;
-	triggerGround = true;
-	triggerAir = true;
+	triggerGround = false;
+	triggerAir = false;
 	triggerTeam = false;
 	triggerHeal = false;
 
