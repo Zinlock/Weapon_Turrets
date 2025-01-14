@@ -50,6 +50,10 @@ function Turret_TribalBasePanel::turretOnRepaired(%db, %obj, %src)
 function Turret_TribalBasePanel::onAdd(%db, %obj)
 {
 	Turret_TribalBaseGenerator::onAdd(%db, %obj);
+
+	%obj.setShapeName("Power Generator", 8564862);
+	%obj.setShapeNameDistance(32);
+	%obj.setShapeNameColor("1 1 1");
 }
 
 function Turret_TribalBasePanel::turretCanMount(%db, %pl, %img)

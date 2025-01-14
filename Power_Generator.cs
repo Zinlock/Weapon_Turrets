@@ -161,6 +161,10 @@ function Turret_TribalBaseGenerator::onAdd(%db, %obj)
 	}
 
 	Parent::onAdd(%db, %obj);
+
+	%obj.setShapeName("Power Generator", 8564862);
+	%obj.setShapeNameDistance(32);
+	%obj.setShapeNameColor("1 1 1");
 }
 
 function Turret_TribalBaseGenerator::turretCanMount(%db, %pl, %img)

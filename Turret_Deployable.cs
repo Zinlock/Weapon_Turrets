@@ -94,6 +94,14 @@ function Turret_TribalDeployableStand::onDriverLeave(%db, %obj, %src)
 function Turret_TribalDeployableArms::onAdd(%db, %obj)
 {
 	Turret_TribalBaseArms::onAdd(%db, %obj);
+
+	if(isObject(%obj.sourceClient))
+		%obj.setShapeName(%obj.sourceClient.name @ "'s " @ %obj.getMountedImage(0).boxItem.turretTitle, 8564862);
+	else
+		%obj.setShapeName("Mini " @ %obj.getMountedImage(0).boxItem.turretTitle, 8564862);
+
+	%obj.setShapeNameDistance(32);
+	%obj.setShapeNameColor("1 1 1");
 }
 
 function Turret_TribalDeployableArms::turretCanMount(%db, %pl, %img)

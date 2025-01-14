@@ -267,6 +267,7 @@ datablock ShapeBaseImageData(Turret_TribalPulseImage)
 
 	shapeFile = "./dts/baseturret_pulse.dts";
 	item = Turret_TribalPulseItem;
+	boxItem = Turret_TribalPulseBoxItem;
 
 	isTribalBaseBarrel = true;
 

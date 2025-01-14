@@ -60,6 +60,7 @@ datablock ShapeBaseImageData(Turret_TribalSeekerImage : Turret_TribalPulseImage)
 {
 	shapeFile = "./dts/baseturret_seeker.dts";
 	item = Turret_TribalSeekerItem;
+	boxItem = Turret_TribalSeekerBoxItem;
 
 	doColorShift = true;
 	colorShiftColor = "0.9 0.9 0.9 1.0";

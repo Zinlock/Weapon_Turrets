@@ -147,6 +147,10 @@ function Station_SensorLarge::onAdd(%db, %obj)
 	}
 
 	Parent::onAdd(%db, %obj);
+
+	%obj.setShapeName("Base Sensor", 8564862);
+	%obj.setShapeNameDistance(32);
+	%obj.setShapeNameColor("1 1 1");
 }
 
 function Station_SensorLarge::turretCanMount(%db, %pl, %img)

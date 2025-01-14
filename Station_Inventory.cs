@@ -311,6 +311,10 @@ function Station_InventoryPad::onAdd(%db, %obj)
 	}
 
 	Parent::onAdd(%db, %obj);
+
+	%obj.setShapeName("Inventory Station", 8564862);
+	%obj.setShapeNameDistance(32);
+	%obj.setShapeNameColor("1 1 1");
 }
 
 function Station_InventoryPad::turretCanMount(%db, %pl, %img)

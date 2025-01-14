@@ -322,6 +322,7 @@ datablock ShapeBaseImageData(Turret_TribalPlasmaImage : Turret_TribalPulseImage)
 {
 	shapeFile = "./dts/baseturret_plasma.dts";
 	item = Turret_TribalPlasmaItem;
+	boxItem = Turret_TribalPlasmaBoxItem;
 
 	doColorShift = true;
 	colorShiftColor = "0.9 0.9 0.9 1.0";

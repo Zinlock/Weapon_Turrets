@@ -46,6 +46,7 @@ datablock ShapeBaseImageData(Turret_TribalChargeImage : Turret_TribalPulseImage)
 {
 	shapeFile = "./dts/baseturret_charge.dts";
 	item = Turret_TribalChargeItem;
+	boxItem = Turret_TribalChargeBoxItem;
 
 	doColorShift = true;
 	colorShiftColor = "0.9 0.9 0.9 1.0";

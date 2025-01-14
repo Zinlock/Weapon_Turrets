@@ -251,7 +251,7 @@ function Turret_TribalBaseArms::onAdd(%db, %obj)
 		%obj.mountImage(%obj.turretImage, 0);
 	else if(isObject(%db.TurretDefaultImage))
 		%obj.mountImage(%db.TurretDefaultImage, 0);
-		
+
 	%obj.idle = %obj.schedule(2000, tbIdleReset);
 }
 
@@ -312,6 +312,25 @@ function Turret_TribalBaseArms::turretOnTargetTick(%db, %pl, %target)
 
 	%pl.aimVector = vectorNormalize(vectorSub(%pos, %pl.getMuzzlePoint(0)));
 	%pl.setAimPointHack(%pos);
+}
+
+function Turret_TribalBaseArms::turretOnIdleTick(%db, %pl)
+{
+	Parent::turretOnIdleTick(%db, %pl);
+
+	if(%pl.getMountedImage(0) != %pl.tLastImage)
+	{
+		if(!isObject(%pl.getMountedImage(0)))
+			%pl.setShapeName("Base Turret", 8564862);
+		else
+		{
+			%pl.setShapeName("Base " @ %pl.getMountedImage(0).boxItem.turretTitle, 8564862);
+			%pl.setShapeNameDistance(32);
+			%pl.setShapeNameColor("1 1 1");
+		}
+
+		%pl.tLastImage = %pl.getMountedImage(0);
+	}
 }
 
 function Turret_TribalBaseArms::tbIdleReset(%db, %pl)

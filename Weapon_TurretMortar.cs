@@ -53,6 +53,7 @@ datablock ShapeBaseImageData(Turret_TribalMortarImage : Turret_TribalPulseImage)
 {
 	shapeFile = "./dts/baseturret_mortar.dts";
 	item = Turret_TribalMortarItem;
+	boxItem = Turret_TribalMortarBoxItem;
 
 	doColorShift = true;
 	colorShiftColor = "0.9 0.9 0.9 1.0";

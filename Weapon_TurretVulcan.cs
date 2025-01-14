@@ -175,6 +175,7 @@ datablock ShapeBaseImageData(Turret_TribalVulcanImage : Turret_TribalPulseImage)
 {
 	shapeFile = "./dts/baseturret_vulcan.dts";
 	item = Turret_TribalVulcanItem;
+	boxItem = Turret_TribalVulcanBoxItem;
 
 	doColorShift = true;
 	colorShiftColor = "0.9 0.9 0.9 1.0";

@@ -338,6 +338,10 @@ function Turret_TribalSentryStand::onDriverLeave(%db, %obj, %src)
 function Turret_TribalSentryArms::onAdd(%db, %obj)
 {
 	Turret_TribalBaseArms::onAdd(%db, %obj);
+
+	%obj.setShapeName("Sentry Turret", 8564862);
+	%obj.setShapeNameDistance(32);
+	%obj.setShapeNameColor("1 1 1");
 }
 
 function Turret_TribalSentryArms::turretCanMount(%db, %pl, %img)
