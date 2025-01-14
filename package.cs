@@ -99,6 +99,14 @@ package TurretPackMain
 			
 			if(%db.defaultScale !$= "")
 				%pl.schedule(0, setScale, %db.defaultScale);
+
+			if(!%db.isTurretArmor)
+			{
+				if(!isObject(TurretTargetSet))
+					new SimSet(TurretTargetSet);
+
+				TurretTargetSet.add(%pl);
+			}
 		}
 	}
 
@@ -235,6 +243,32 @@ package TurretPackMain
 			return;
 		
 		Parent::RemoveBody(%pl);
+	}
+	
+	function WheeledVehicleData::onAdd(%db, %obj)
+	{
+		Parent::onAdd(%db, %obj);
+
+		if(isObject(%obj))
+		{
+			if(!isObject(TurretTargetSet))
+				new SimSet(TurretTargetSet);
+
+			TurretTargetSet.add(%obj);
+		}
+	}
+	
+	function FlyingVehicleData::onAdd(%db, %obj)
+	{
+		Parent::onAdd(%db, %obj);
+
+		if(isObject(%obj))
+		{
+			if(!isObject(TurretTargetSet))
+				new SimSet(TurretTargetSet);
+
+			TurretTargetSet.add(%obj);
+		}
 	}
 
 	function WheeledVehicleData::onCollision(%this, %obj, %col, %vec, %speed)

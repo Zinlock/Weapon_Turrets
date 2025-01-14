@@ -25,6 +25,42 @@ function turretTickLoop()
 	$ttl = schedule(150, 0, turretTickLoop);
 }
 
+function dtt(%pre, %n)
+{
+	// if(ptimer_duration(%n) >= 1)
+	// 	talk(%pre @ ": " @ ptimer_duration(%n));
+}
+
+function turretRadiusSearch(%pos, %size, %mask)
+{
+	if(!isObject(TurretTargetSet))
+		new SimSet(TurretTargetSet);
+
+	$ttrsid = 0;
+	$ttrspos = %pos;
+	$ttrsmask = %mask;
+	$ttrsdist = %size;
+}
+
+function turretRadiusSearchNext()
+{
+	if($ttrsid >= TurretTargetSet.getCount())
+		return -1;
+
+	while(isObject(%obj = TurretTargetSet.getObject($ttrsid)))
+	{
+		$ttrsid++;
+
+		if(%obj.getType() & $ttrsmask && vectorDist($ttrspos, %obj.getPosition()) <= $ttrsdist)
+			return %obj;
+
+		if($ttrsid >= TurretTargetSet.getCount())
+			break;
+	}
+
+	return -1;
+}
+
 cancel($ttl);
 $ttl = schedule(0, 0, turretTickLoop);
 
@@ -222,8 +258,8 @@ function Armor::turretOnIdleTick(%db, %pl)
 
 			%found = -1;
 			%pos = %pl.getCenterPos();
-			initContainerRadiusSearch(%pos, %db.TurretLookRange, %db.TurretLookMask);
-			while(isObject(%col = containerSearchNext()))
+			turretRadiusSearch(%pos, %db.TurretLookRange, %db.TurretLookMask);
+			while(isObject(%col = turretRadiusSearchNext()))
 			{
 				if(%col == %pl || %col == %pl.turretHead || %col == %pl.turretBase)
 					continue;
@@ -697,8 +733,8 @@ function AIPlayer::turretLook(%pl, %radius, %mask)
 	%dist = %radius * 2;
 	%found = -1;
 	%pos = %pl.getCenterPos();
-	initContainerRadiusSearch(%pos, %radius, %mask);
-	while(isObject(%col = containerSearchNext()))
+	turretRadiusSearch(%pos, %radius, %mask);
+	while(isObject(%col = turretRadiusSearchNext()))
 	{
 		if(!isObject(%col) || %col == %pl || %col == %pl.turretHead || %col == %pl.turretBase) continue;
 
