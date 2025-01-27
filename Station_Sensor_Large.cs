@@ -82,8 +82,8 @@ function AIPlayer::twSensor(%pl)
 	if(!%pl.isDisabled && %pl.isPowered)
 	{
 		%pos = %pl.getHackPosition();
-		initContainerRadiusSearch(%pos, %db.sensorRange, $TypeMasks::PlayerObjectType);
-		while(isObject(%col = containerSearchNext()))
+		turretRadiusSearch(%pos, %db.sensorRange, $TypeMasks::PlayerObjectType);
+		while(isObject(%col = turretRadiusSearchNext()))
 		{
 			if(%col == %pl || %col.getDamagePercent() >= 1.0 || %col.getDataBlock().isTurretArmor)
 				continue;
